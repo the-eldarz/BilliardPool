@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  /* ===== ВСЕ СТИЛИ ИЗ ИСХОДНОГО ФАЙЛА (ПОЛНОСТЬЮ) ===== */
   :root{
     --gold: #d4af5a;
     --gold-dim: #9c8452;
@@ -59,6 +60,39 @@
     margin-top:8px; font-size:13px; color:#8b93a1; font-weight:500;
   }
 
+  /* ---------- ПРОФИЛЬ ---------- */
+  .profile-avatar-wrap{
+    position:absolute;
+    top:max(16px, env(safe-area-inset-top));
+    left:16px;
+    z-index:20;
+  }
+  .profile-avatar{
+    width:48px; height:48px; border-radius:50%;
+    border:2px solid var(--gold);
+    box-shadow:0 0 12px rgba(212,175,90,0.35);
+    background:var(--ink-2);
+    cursor:pointer;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    font-weight:600;
+    color:var(--gold);
+    transition:transform .2s ease, box-shadow .2s ease;
+    object-fit:cover;
+  }
+  .profile-avatar:active{ transform:scale(.92); box-shadow:0 0 20px rgba(212,175,90,0.6); }
+  .profile-avatar img{
+    width:100%; height:100%; object-fit:cover; display:block;
+  }
+  .profile-avatar .initials{
+    font-size:20px; font-weight:700; color:var(--gold);
+    pointer-events:none;
+  }
+
+  /* ---------- КАРУСЕЛЬ (ОБЩАЯ) ---------- */
   .carousel-viewport{
     flex:1; position:relative; overflow:hidden;
     display:flex; align-items:center;
@@ -137,7 +171,222 @@
   }
   @keyframes hintfade{ 0%,100%{opacity:.35} 50%{opacity:.8} }
 
-  /* ---------- GAME ---------- */
+  /* ---------- КНОПКА НАЗАД НА КАРУСЕЛИ ---------- */
+  .carousel-back {
+    position:absolute;
+    top:max(14px, env(safe-area-inset-top));
+    left:14px;
+    z-index:15;
+    width:38px; height:38px;
+    border-radius:50%;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.12);
+    color:#fff;
+    font-size:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:background .2s;
+  }
+  .carousel-back:active { background:rgba(255,255,255,.2); }
+
+  /* ---------- ЗАМОК (для бота) ---------- */
+  .lock-badge {
+    position:absolute;
+    top:14px;
+    right:14px;
+    background:rgba(0,0,0,0.6);
+    backdrop-filter:blur(4px);
+    border-radius:20px;
+    padding:4px 12px;
+    font-size:11px;
+    color:#f0d9a0;
+    font-weight:600;
+    border:1px solid rgba(255,255,255,0.1);
+    pointer-events:none;
+    z-index:2;
+  }
+
+  /* ---------- НАСТРОЙКИ, ПРОФИЛЬ (как в исходнике) ---------- */
+  .settings-overlay{
+    position:fixed; inset:0; z-index:50;
+    background:rgba(4,6,8,.78);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none; transition:opacity .3s ease;
+    padding:24px;
+  }
+  .settings-overlay.show{ opacity:1; pointer-events:auto; }
+  .settings-panel{
+    width:100%; max-width:400px; max-height:calc(100vh - 48px);
+    border-radius:22px;
+    background:linear-gradient(180deg,#1b212b,#12161d);
+    border:1px solid rgba(255,255,255,.1);
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.7);
+    padding:22px 20px 20px;
+    display:flex; flex-direction:column;
+  }
+  .settings-header{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:18px; flex-shrink:0;
+  }
+  .settings-scroll-wrap{ position:relative; flex:1 1 auto; min-height:0; display:flex; }
+  .settings-scroll-area{
+    flex:1 1 auto; overflow-y:auto; padding-right:20px;
+    scrollbar-width:none; -ms-overflow-style:none;
+  }
+  .settings-scroll-area::-webkit-scrollbar{ display:none; }
+  .settings-scrollbar{
+    position:absolute; right:-2px; top:0; bottom:0; width:26px;
+    touch-action:none;
+  }
+  .settings-scrollbar::before{
+    content:''; position:absolute; left:50%; top:2px; bottom:2px; width:4px;
+    transform:translateX(-50%); background:rgba(255,255,255,.08); border-radius:3px;
+  }
+  .settings-scrollbar-thumb{
+    position:absolute; left:50%; width:14px; min-height:34px;
+    transform:translateX(-50%); border-radius:7px;
+    background:linear-gradient(180deg,#f0d9a0,#c9a24c);
+    box-shadow:0 2px 6px rgba(0,0,0,.4);
+    touch-action:none; display:none;
+  }
+  .settings-footer{ flex-shrink:0; padding-top:16px; }
+  .settings-save-btn{
+    width:100%; border:none; cursor:pointer; padding:14px; border-radius:100px;
+    background:linear-gradient(180deg,#f0d9a0,#c9a24c); color:#2a1f0a;
+    font-weight:700; font-size:14.5px; transition:opacity .2s ease;
+  }
+  .settings-save-btn:active{ opacity:.85; }
+  .settings-title{
+    font-family:'Playfair Display',serif; font-weight:700; font-size:20px; color:var(--gold);
+  }
+  .settings-close{
+    width:32px; height:32px; border-radius:50%;
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14);
+    color:#fff; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:15px;
+  }
+  .settings-row{
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    padding:14px 0; border-top:1px solid rgba(255,255,255,.08);
+    transition:opacity .25s ease;
+  }
+  .settings-row:first-of-type{ border-top:none; }
+  .settings-group{ border-top:1px solid rgba(255,255,255,.1); padding-top:2px; margin-top:4px; }
+  .settings-group:first-of-type{ border-top:none; margin-top:0; }
+  .settings-group .settings-row:first-of-type{ border-top:none; }
+  .settings-note{ font-size:11px; color:#767e8a; line-height:1.5; margin-top:14px; }
+  .settings-label-title{ font-size:14.5px; font-weight:600; color:#f0ede6;}
+  .settings-label-sub{ font-size:11.5px; color:#8b93a1; margin-top:3px; max-width:230px; line-height:1.4;}
+  .settings-sensitivity{ flex-direction:column; align-items:stretch; }
+  .settings-sensitivity .settings-label{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;}
+  .settings-sensitivity .settings-label-sub{ margin-top:0; color:var(--gold); font-weight:700; font-size:13px;}
+  .sens-value-row{ display:flex; align-items:center; gap:8px; }
+  .sens-reset{
+    width:24px; height:24px; border-radius:50%; flex-shrink:0;
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2);
+    color:#c9cdd4; font-size:13px; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; padding:0; line-height:1;
+  }
+  .sens-reset:active{ background:rgba(255,255,255,.2); }
+  .switch{ position:relative; width:50px; height:29px; flex-shrink:0; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .switch-slider{
+    position:absolute; inset:0; border-radius:16px; cursor:pointer;
+    background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.18);
+    transition:background .2s ease;
+  }
+  .switch-slider::before{
+    content:''; position:absolute; width:23px; height:23px; border-radius:50%;
+    left:2px; top:2px; background:#fff; box-shadow:0 2px 4px rgba(0,0,0,.4);
+    transition:transform .2s ease;
+  }
+  .switch input:checked + .switch-slider{ background:linear-gradient(180deg,#f0d9a0,#c9a24c); }
+  .switch input:checked + .switch-slider::before{ transform:translateX(21px); }
+  .settings-sensitivity input[type="range"]{
+    -webkit-appearance:none; width:100%; height:6px; border-radius:4px;
+    background:linear-gradient(90deg, rgba(255,255,255,.15), rgba(255,255,255,.15));
+    outline:none;
+  }
+  .settings-sensitivity input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none; width:22px; height:22px; border-radius:50%;
+    background:linear-gradient(180deg,#f0d9a0,#c9a24c);
+    box-shadow:0 2px 6px rgba(0,0,0,.5); cursor:pointer; border:1px solid rgba(0,0,0,.2);
+  }
+
+  /* ---------- ПРОФИЛЬ МОДАЛ ---------- */
+  .profile-overlay{
+    position:fixed; inset:0; z-index:60;
+    background:rgba(4,6,8,.78);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none; transition:opacity .3s ease;
+    padding:24px;
+  }
+  .profile-overlay.show{ opacity:1; pointer-events:auto; }
+  .profile-panel{
+    width:100%; max-width:400px; max-height:calc(100vh - 48px);
+    border-radius:22px;
+    background:linear-gradient(180deg,#1b212b,#12161d);
+    border:1px solid rgba(255,255,255,.1);
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.7);
+    padding:22px 20px 20px;
+    display:flex; flex-direction:column;
+    overflow-y:auto;
+  }
+  .profile-header{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:18px; flex-shrink:0;
+  }
+  .profile-title{
+    font-family:'Playfair Display',serif; font-weight:700; font-size:20px; color:var(--gold);
+  }
+  .profile-close{
+    width:32px; height:32px; border-radius:50%;
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14);
+    color:#fff; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:15px;
+  }
+  .profile-field{ margin-bottom:16px; }
+  .profile-field label{ display:block; font-size:13px; color:#8b93a1; margin-bottom:5px; font-weight:500; }
+  .profile-field input{
+    width:100%; padding:10px 14px; border-radius:12px;
+    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
+    color:#f2ede2; font-size:15px; outline:none; transition:border .2s;
+  }
+  .profile-field input:focus{ border-color:var(--gold); }
+  .profile-actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:6px; }
+  .profile-btn{
+    flex:1 1 auto; padding:10px 16px; border-radius:100px;
+    border:none; background:rgba(255,255,255,.08); color:#f2ede2;
+    font-size:13px; font-weight:600; cursor:pointer;
+    transition:background .2s, transform .1s;
+    min-width:60px; text-align:center;
+  }
+  .profile-btn:active{ transform:scale(.94); background:rgba(255,255,255,.18); }
+  .profile-btn.primary{
+    background:linear-gradient(180deg,#f0d9a0,#c9a24c); color:#2a1f0a;
+  }
+  .profile-btn.danger{
+    background:rgba(200,60,60,.25); color:#f0a0a0; border:1px solid rgba(200,60,60,.3);
+  }
+  .profile-avatar-preview{
+    width:80px; height:80px; border-radius:50%;
+    border:2px solid var(--gold);
+    margin:6px auto 16px;
+    background:var(--ink-2);
+    display:flex; align-items:center; justify-content:center;
+    font-size:34px; font-weight:700; color:var(--gold);
+    overflow:hidden;
+  }
+  .profile-avatar-preview img{
+    width:100%; height:100%; object-fit:cover; display:block;
+  }
+  .profile-avatar-preview .initials{
+    font-size:28px; font-weight:700; color:var(--gold);
+  }
+
+  /* ---------- ИГРОВОЙ ЭКРАН ---------- */
   #gameScreen{
     position:absolute; inset:0;
     opacity:0; transform:scale(.97);
@@ -228,17 +477,34 @@
     pointer-events:none;
   }
 
-  .joystick{
+  .aim-controls{
     position:absolute; left:50%; bottom:104px; transform:translateX(-50%);
+    display:flex; align-items:center; gap:16px;
+    z-index:6;
+  }
+  .joystick{
     width:108px; height:108px; border-radius:50%;
     background:radial-gradient(circle at 50% 40%, rgba(30,36,44,.7), rgba(8,10,13,.55));
     border:1px solid rgba(255,255,255,.2);
     box-shadow:inset 0 3px 12px rgba(0,0,0,.55), 0 6px 16px rgba(0,0,0,.35);
-    z-index:6; opacity:0; transition:opacity .25s ease;
+    opacity:0; transition:opacity .25s ease;
     touch-action:none;
     display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
   }
   .joystick.show{ opacity:.92; }
+  .cue-btn{
+    width:56px; height:56px; border-radius:50%; flex-shrink:0;
+    background:radial-gradient(circle at 50% 35%, rgba(40,46,54,.75), rgba(8,10,13,.6));
+    border:1px solid rgba(255,255,255,.22);
+    box-shadow:inset 0 2px 8px rgba(0,0,0,.5), 0 5px 14px rgba(0,0,0,.35);
+    color:var(--gold); font-size:26px; font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; transition:opacity .25s ease, background .1s ease;
+    touch-action:none; user-select:none;
+  }
+  .cue-btn.show{ opacity:.92; }
+  .cue-btn.pressed{ background:radial-gradient(circle at 50% 35%, rgba(201,162,76,.5), rgba(60,45,10,.6)); }
   .joystick-ring{
     position:absolute; inset:8px; border-radius:50%;
     border:1px dashed rgba(255,255,255,.18);
@@ -291,73 +557,6 @@
     background:linear-gradient(180deg,#f0d9a0,#c9a24c); color:#2a1f0a;
     font-weight:700; font-size:14px;
   }
-
-  /* ---------- SETTINGS ---------- */
-  .settings-overlay{
-    position:fixed; inset:0; z-index:50;
-    background:rgba(4,6,8,.78);
-    display:flex; align-items:center; justify-content:center;
-    opacity:0; pointer-events:none; transition:opacity .3s ease;
-    padding:24px;
-  }
-  .settings-overlay.show{ opacity:1; pointer-events:auto; }
-  .settings-panel{
-    width:100%; max-width:400px; border-radius:22px;
-    background:linear-gradient(180deg,#1b212b,#12161d);
-    border:1px solid rgba(255,255,255,.1);
-    box-shadow:0 30px 60px -20px rgba(0,0,0,.7);
-    padding:22px 20px 24px;
-  }
-  .settings-header{
-    display:flex; align-items:center; justify-content:space-between;
-    margin-bottom:18px;
-  }
-  .settings-title{
-    font-family:'Playfair Display',serif; font-weight:700; font-size:20px; color:var(--gold);
-  }
-  .settings-close{
-    width:32px; height:32px; border-radius:50%;
-    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14);
-    color:#fff; display:flex; align-items:center; justify-content:center;
-    cursor:pointer; font-size:15px;
-  }
-  .settings-row{
-    display:flex; align-items:center; justify-content:space-between; gap:14px;
-    padding:14px 0; border-top:1px solid rgba(255,255,255,.08);
-    transition:opacity .25s ease;
-  }
-  .settings-row:first-of-type{ border-top:none; }
-  .settings-label-title{ font-size:14.5px; font-weight:600; color:#f0ede6;}
-  .settings-label-sub{ font-size:11.5px; color:#8b93a1; margin-top:3px; max-width:230px; line-height:1.4;}
-  .settings-sensitivity{ flex-direction:column; align-items:stretch; }
-  .settings-sensitivity .settings-label{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;}
-  .settings-sensitivity .settings-label-sub{ margin-top:0; color:var(--gold); font-weight:700; font-size:13px;}
-
-  .switch{ position:relative; width:50px; height:29px; flex-shrink:0; }
-  .switch input{ opacity:0; width:0; height:0; }
-  .switch-slider{
-    position:absolute; inset:0; border-radius:16px; cursor:pointer;
-    background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.18);
-    transition:background .2s ease;
-  }
-  .switch-slider::before{
-    content:''; position:absolute; width:23px; height:23px; border-radius:50%;
-    left:2px; top:2px; background:#fff; box-shadow:0 2px 4px rgba(0,0,0,.4);
-    transition:transform .2s ease;
-  }
-  .switch input:checked + .switch-slider{ background:linear-gradient(180deg,#f0d9a0,#c9a24c); }
-  .switch input:checked + .switch-slider::before{ transform:translateX(21px); }
-
-  .settings-sensitivity input[type="range"]{
-    -webkit-appearance:none; width:100%; height:6px; border-radius:4px;
-    background:linear-gradient(90deg, rgba(255,255,255,.15), rgba(255,255,255,.15));
-    outline:none;
-  }
-  .settings-sensitivity input[type="range"]::-webkit-slider-thumb{
-    -webkit-appearance:none; width:22px; height:22px; border-radius:50%;
-    background:linear-gradient(180deg,#f0d9a0,#c9a24c);
-    box-shadow:0 2px 6px rgba(0,0,0,.5); cursor:pointer; border:1px solid rgba(0,0,0,.2);
-  }
 </style>
 </head>
 <body>
@@ -365,25 +564,43 @@
 
   <!-- MENU -->
   <div id="menu">
+    <!-- ПРОФИЛЬ -->
+    <div class="profile-avatar-wrap" id="profileAvatarWrap">
+      <div class="profile-avatar" id="profileAvatar">
+        <span class="initials" id="avatarInitials">👤</span>
+      </div>
+    </div>
     <div class="menu-settings-btn" id="menuSettingsBtn">⚙</div>
+
     <div class="menu-top">
       <div class="menu-eyebrow">WORLD TOUR</div>
       <div class="menu-title">Billiard Terek</div>
-      <div class="menu-sub">Выберите стол — проведите пальцем влево или вправо</div>
+      <div class="menu-sub" id="menuSub">Выберите режим</div>
     </div>
 
-    <div class="carousel-viewport" id="viewport">
-      <div class="carousel-track" id="track"></div>
+    <!-- КАРУСЕЛЬ РЕЖИМОВ -->
+    <div id="modeCarousel" style="flex:1; display:flex; flex-direction:column;">
+      <div class="carousel-viewport" id="modeViewport">
+        <div class="carousel-track" id="modeTrack"></div>
+      </div>
+      <div class="swipe-hint" style="position:static; padding-bottom:10px;">← ВЫБЕРИТЕ РЕЖИМ →</div>
+      <div class="dots" id="modeDots"></div>
     </div>
 
-    <div class="swipe-hint" id="swipeHint">← ПРОВЕДИТЕ ПАЛЬЦЕМ →</div>
-    <div class="dots" id="dots"></div>
+    <!-- КАРУСЕЛЬ ЛОКАЦИЙ (изначально скрыта) -->
+    <div id="locationCarousel" style="display:none; flex:1; flex-direction:column;">
+      <div class="carousel-back" id="carouselBack">‹</div>
+      <div class="carousel-viewport" id="viewport">
+        <div class="carousel-track" id="track"></div>
+      </div>
+      <div class="swipe-hint" id="swipeHint">← ПРОВЕДИТЕ ПАЛЬЦЕМ →</div>
+      <div class="dots" id="dots"></div>
+    </div>
   </div>
 
-  <!-- GAME -->
+  <!-- ИГРОВОЙ ЭКРАН -->
   <div id="gameScreen">
     <canvas id="tableCanvas"></canvas>
-
     <div class="hud-top">
       <div class="back-btn" id="backBtn">‹</div>
       <div class="hud-center">
@@ -395,25 +612,24 @@
         <div class="hud-reset" id="resetBtn">↻</div>
       </div>
     </div>
-
-    <div class="power-hint" id="powerHint">Прицел — по столу или джойстиком снизу · сила — шкала слева вниз</div>
+    <div class="power-hint" id="powerHint">Способ прицела — в настройках ⚙ · сила — шкала слева</div>
     <div class="power-meter" id="powerMeter">
       <div class="power-meter-fill" id="powerFill"></div>
       <div class="power-meter-ticks"></div>
     </div>
-
     <div class="pocket-tray" id="pocketTray"></div>
-
-    <div class="joystick" id="joystick">
-      <div class="joystick-ring"></div>
-      <div class="joystick-knob" id="joystickKnob"></div>
+    <div class="aim-controls" id="aimControls">
+      <div class="cue-btn" id="cueBtnLeft">‹</div>
+      <div class="joystick" id="joystick">
+        <div class="joystick-ring"></div>
+        <div class="joystick-knob" id="joystickKnob"></div>
+      </div>
+      <div class="cue-btn" id="cueBtnRight">›</div>
     </div>
-
     <div class="balls-tray">
       <div class="tray-group" id="solidsTray"><div class="tray-label">СПЛОШНЫЕ</div></div>
       <div class="tray-group" id="stripesTray" style="justify-content:flex-end;"><div class="tray-label" style="text-align:right;">ПОЛОСАТЫЕ</div></div>
     </div>
-
     <div class="msg-overlay" id="msgOverlay">
       <div class="msg-title" id="msgTitle">Победа!</div>
       <div class="msg-sub" id="msgSub">Игрок 1 забил все шары и восьмёрку.</div>
@@ -421,28 +637,137 @@
     </div>
   </div>
 
+  <!-- НАСТРОЙКИ -->
   <div class="settings-overlay" id="settingsOverlay">
     <div class="settings-panel">
       <div class="settings-header">
         <div class="settings-title">Настройки</div>
         <div class="settings-close" id="settingsClose">✕</div>
       </div>
-      <div class="settings-row">
-        <div class="settings-label">
-          <div class="settings-label-title">Джойстик для прицела</div>
-          <div class="settings-label-sub">Вкл. — целиться джойстиком снизу, протяжка по столу отключается.<br>Выкл. — целиться протяжкой пальцем по столу.</div>
+      <div class="settings-scroll-wrap">
+        <div class="settings-scroll-area" id="settingsScrollArea">
+          <div class="settings-group">
+            <div class="settings-row">
+              <div class="settings-label">
+                <div class="settings-label-title">Звук</div>
+                <div class="settings-label-sub">Удары, борта, лузы, перекатывание шаров.</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="soundToggle" checked>
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+            <div class="settings-row">
+              <div class="settings-label">
+                <div class="settings-label-title">Вибрация</div>
+                <div class="settings-label-sub">Отклик на удар и попадание в лузу.</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="vibrationToggle" checked>
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+          </div>
+          <div class="settings-group">
+            <div class="settings-row">
+              <div class="settings-label">
+                <div class="settings-label-title">Сенсор (палец по столу)</div>
+                <div class="settings-label-sub">Тянуть пальцем прямо по столу, чтобы прицелиться.</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="touchToggle">
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+            <div class="settings-row settings-sensitivity" id="touchSensRow">
+              <div class="settings-label">
+                <div class="settings-label-title">Чувствительность сенсора</div>
+                <div class="sens-value-row">
+                  <span class="settings-label-sub" id="touchSensValue">1.0×</span>
+                  <button class="sens-reset" id="touchSensReset" title="Сбросить">↺</button>
+                </div>
+              </div>
+              <input type="range" id="touchSensSlider" min="-6" max="6" step="0.2" value="1">
+            </div>
+          </div>
+          <div class="settings-group">
+            <div class="settings-row">
+              <div class="settings-label">
+                <div class="settings-label-title">Джойстик</div>
+                <div class="settings-label-sub">Круглый джойстик снизу — поворачивает кий, пока держишь.</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="joystickToggle" checked>
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+            <div class="settings-row settings-sensitivity" id="joystickSensRow">
+              <div class="settings-label">
+                <div class="settings-label-title">Чувствительность джойстика</div>
+                <div class="sens-value-row">
+                  <span class="settings-label-sub" id="joystickSensValue">1.0×</span>
+                  <button class="sens-reset" id="joystickSensReset" title="Сбросить">↺</button>
+                </div>
+              </div>
+              <input type="range" id="joystickSensSlider" min="-6" max="6" step="0.2" value="1">
+            </div>
+          </div>
+          <div class="settings-group">
+            <div class="settings-row">
+              <div class="settings-label">
+                <div class="settings-label-title">Кнопки ‹ ›</div>
+                <div class="settings-label-sub">Две кнопки снизу — держи, чтобы плавно повернуть кий.</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="buttonsToggle">
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+            <div class="settings-row settings-sensitivity" id="buttonsSensRow">
+              <div class="settings-label">
+                <div class="settings-label-title">Чувствительность кнопок</div>
+                <div class="sens-value-row">
+                  <span class="settings-label-sub" id="buttonsSensValue">1.0×</span>
+                  <button class="sens-reset" id="buttonsSensReset" title="Сбросить">↺</button>
+                </div>
+              </div>
+              <input type="range" id="buttonsSensSlider" min="-6" max="6" step="0.2" value="1">
+            </div>
+          </div>
+          <div class="settings-note">Плюс — кий поворачивается быстрее и резче, чем больше значение, тем жёстче отклик. Минус — медленнее и мягче, чем дальше в минус, тем плавнее.</div>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="joystickToggle" checked>
-          <span class="switch-slider"></span>
-        </label>
+        <div class="settings-scrollbar" id="settingsScrollbar">
+          <div class="settings-scrollbar-thumb" id="settingsScrollbarThumb"></div>
+        </div>
       </div>
-      <div class="settings-row settings-sensitivity" id="sensitivityRow">
-        <div class="settings-label">
-          <div class="settings-label-title">Чувствительность джойстика</div>
-          <div class="settings-label-sub" id="sensitivityValue">1.0×</div>
-        </div>
-        <input type="range" id="sensitivitySlider" min="0.4" max="2.2" step="0.1" value="1">
+      <div class="settings-footer">
+        <button class="settings-save-btn" id="settingsSaveBtn">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ПРОФИЛЬ МОДАЛ -->
+  <div class="profile-overlay" id="profileOverlay">
+    <div class="profile-panel">
+      <div class="profile-header">
+        <div class="profile-title">Мой профиль</div>
+        <div class="profile-close" id="profileClose">✕</div>
+      </div>
+      <div class="profile-avatar-preview" id="profileAvatarPreview">
+        <span class="initials" id="previewInitials">👤</span>
+      </div>
+      <div class="profile-field">
+        <label>Никнейм</label>
+        <input type="text" id="profileNickname" placeholder="Введите никнейм" maxlength="24">
+      </div>
+      <div class="profile-actions">
+        <button class="profile-btn primary" id="profileFromTelegram">Из Telegram</button>
+        <button class="profile-btn" id="profileFromGallery">Загрузить из галереи</button>
+        <button class="profile-btn danger" id="profileRemoveAvatar">Убрать аватарку</button>
+      </div>
+      <input type="file" id="profileFileInput" accept="image/*" style="display:none;">
+      <div style="margin-top:16px; display:flex; gap:10px;">
+        <button class="profile-btn primary" id="profileSaveBtn" style="flex:1;">Сохранить</button>
       </div>
     </div>
   </div>
@@ -453,12 +778,380 @@
 (function(){
 "use strict";
 
-/* =========================================================
-   LOCATIONS / THEMES
-========================================================= */
+// ============================================================
+// 1. ПРОФИЛЬ (как в исходнике)
+// ============================================================
+const PROFILE_STORAGE_KEY = 'billiardProfile';
+let profile = { nickname: '', avatarDataURL: null };
+function loadProfile(){
+  try{
+    const raw = localStorage.getItem(PROFILE_STORAGE_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(parsed.nickname !== undefined) profile.nickname = parsed.nickname;
+      if(parsed.avatarDataURL !== undefined) profile.avatarDataURL = parsed.avatarDataURL;
+    }
+  }catch(e){}
+}
+function saveProfile(){
+  try{
+    localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify({nickname:profile.nickname, avatarDataURL:profile.avatarDataURL}));
+    return true;
+  }catch(e){ return false; }
+}
+function updateAvatarUI(){
+  const avatarEl = document.getElementById('profileAvatar');
+  avatarEl.innerHTML = '';
+  if(profile.avatarDataURL){
+    const img = document.createElement('img');
+    img.src = profile.avatarDataURL;
+    img.alt = 'avatar';
+    avatarEl.appendChild(img);
+  } else {
+    const span = document.createElement('span');
+    span.className = 'initials';
+    span.textContent = profile.nickname ? profile.nickname.slice(0,2).toUpperCase() : '👤';
+    avatarEl.appendChild(span);
+  }
+  updatePreview();
+}
+function updatePreview(){
+  const previewEl = document.getElementById('profileAvatarPreview');
+  previewEl.innerHTML = '';
+  if(profile.avatarDataURL){
+    const img = document.createElement('img');
+    img.src = profile.avatarDataURL;
+    img.alt = 'avatar';
+    previewEl.appendChild(img);
+  } else {
+    const span = document.createElement('span');
+    span.className = 'initials';
+    span.textContent = profile.nickname ? profile.nickname.slice(0,2).toUpperCase() : '👤';
+    previewEl.appendChild(span);
+  }
+}
+loadProfile();
+updateAvatarUI();
+
+// Открытие/закрытие профиля
+document.getElementById('profileAvatarWrap').addEventListener('click', function(){
+  document.getElementById('profileNickname').value = profile.nickname || '';
+  updatePreview();
+  document.getElementById('profileOverlay').classList.add('show');
+});
+document.getElementById('profileClose').addEventListener('click', function(){
+  document.getElementById('profileOverlay').classList.remove('show');
+});
+document.getElementById('profileOverlay').addEventListener('click', function(e){
+  if(e.target === this) this.classList.remove('show');
+});
+document.getElementById('profileSaveBtn').addEventListener('click', function(){
+  const newNick = document.getElementById('profileNickname').value.trim();
+  profile.nickname = newNick;
+  const ok = saveProfile();
+  updateAvatarUI();
+  if(ok){
+    this.textContent = 'Сохранено ✓';
+    setTimeout(()=>{ this.textContent = 'Сохранить'; }, 1200);
+  } else {
+    this.textContent = 'Ошибка';
+    setTimeout(()=>{ this.textContent = 'Сохранить'; }, 1200);
+  }
+});
+document.getElementById('profileFromTelegram').addEventListener('click', function(){
+  if(window.Telegram && Telegram.WebApp){
+    const user = Telegram.WebApp.initDataUnsafe?.user;
+    if(user){
+      if(user.username) profile.nickname = user.username;
+      else if(user.first_name) profile.nickname = user.first_name + (user.last_name ? ' '+user.last_name : '');
+      document.getElementById('profileNickname').value = profile.nickname;
+      if(user.photo_url){
+        fetch(user.photo_url)
+          .then(res => res.blob())
+          .then(blob => {
+            const reader = new FileReader();
+            reader.onload = ()=>{
+              profile.avatarDataURL = reader.result;
+              updateAvatarUI(); updatePreview(); saveProfile();
+            };
+            reader.readAsDataURL(blob);
+          })
+          .catch(()=>{
+            profile.avatarDataURL = user.photo_url;
+            updateAvatarUI(); updatePreview(); saveProfile();
+          });
+      } else {
+        saveProfile(); updateAvatarUI(); updatePreview();
+      }
+      return;
+    }
+  }
+  alert('Не удалось получить данные из Telegram. Убедитесь, что приложение запущено в Telegram WebApp.');
+});
+document.getElementById('profileFromGallery').addEventListener('click', function(){
+  document.getElementById('profileFileInput').click();
+});
+document.getElementById('profileFileInput').addEventListener('change', function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev)=>{
+    profile.avatarDataURL = ev.target.result;
+    saveProfile();
+    updateAvatarUI();
+    updatePreview();
+  };
+  reader.readAsDataURL(file);
+  this.value = '';
+});
+document.getElementById('profileRemoveAvatar').addEventListener('click', function(){
+  profile.avatarDataURL = null;
+  saveProfile();
+  updateAvatarUI();
+  updatePreview();
+});
+
+// ============================================================
+// 2. НАСТРОЙКИ (как в исходнике)
+// ============================================================
+const SETTINGS_STORAGE_KEY = 'billiardTerekSettings';
+let settings = {
+  touchEnabled: false, joystickEnabled: true, buttonsEnabled: false,
+  touchSensitivity: 1.0, joystickSensitivity: 1.0, buttonsSensitivity: 1.0,
+  soundEnabled: true, vibrationEnabled: true
+};
+(function loadSettings(){
+  try{
+    const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
+    if(raw) Object.assign(settings, JSON.parse(raw));
+  }catch(e){}
+})();
+function saveSettings(){
+  try{ localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings)); return true; }
+  catch(e){ return false; }
+}
+
+// Настройки UI
+function setupInputToggle(key, toggleId, sensRowId, sensSliderId, sensValueId, resetBtnId, onChangeExtra){
+  const toggleEl = document.getElementById(toggleId);
+  const rowEl = document.getElementById(sensRowId);
+  const sliderEl = document.getElementById(sensSliderId);
+  const valueEl = document.getElementById(sensValueId);
+  const resetEl = document.getElementById(resetBtnId);
+
+  const refreshRow = ()=>{
+    rowEl.style.opacity = settings[key+'Enabled'] ? '1' : '.4';
+    rowEl.style.pointerEvents = settings[key+'Enabled'] ? 'auto' : 'none';
+  };
+  const refreshValue = ()=>{
+    const v = settings[key+'Sensitivity'];
+    valueEl.textContent = v.toFixed(1)+'×';
+  };
+
+  toggleEl.checked = settings[key+'Enabled'];
+  sliderEl.value = settings[key+'Sensitivity'];
+  refreshRow(); refreshValue();
+
+  toggleEl.addEventListener('change', (e)=>{
+    settings[key+'Enabled'] = e.target.checked;
+    refreshRow();
+    applyControlVisibility();
+    if(onChangeExtra) onChangeExtra();
+  });
+  sliderEl.addEventListener('input', (e)=>{
+    settings[key+'Sensitivity'] = parseFloat(e.target.value);
+    refreshValue();
+  });
+  resetEl.addEventListener('click', ()=>{
+    settings[key+'Sensitivity'] = 1.0;
+    sliderEl.value = 1.0;
+    refreshValue();
+  });
+}
+setupInputToggle('touch', 'touchToggle', 'touchSensRow', 'touchSensSlider', 'touchSensValue', 'touchSensReset', ()=>{ dragMode = null; touchTargetAngle = null; });
+setupInputToggle('joystick', 'joystickToggle', 'joystickSensRow', 'joystickSensSlider', 'joystickSensValue', 'joystickSensReset', ()=>{ endJoystick(); });
+setupInputToggle('buttons', 'buttonsToggle', 'buttonsSensRow', 'buttonsSensSlider', 'buttonsSensValue', 'buttonsSensReset', ()=>{ btnRotateDir = 0; cueBtnLeftEl.classList.remove('pressed'); cueBtnRightEl.classList.remove('pressed'); });
+
+document.getElementById('soundToggle').checked = settings.soundEnabled;
+document.getElementById('vibrationToggle').checked = settings.vibrationEnabled;
+document.getElementById('soundToggle').addEventListener('change', function(e){
+  settings.soundEnabled = e.target.checked;
+  if(e.target.checked) ensureAudio();
+});
+document.getElementById('vibrationToggle').addEventListener('change', function(e){
+  settings.vibrationEnabled = e.target.checked;
+  if(e.target.checked) vibrate(15);
+});
+
+document.getElementById('settingsSaveBtn').addEventListener('click', function(){
+  const ok = saveSettings();
+  this.textContent = ok ? 'Сохранено ✓' : 'Не удалось сохранить';
+  this.disabled = true;
+  setTimeout(()=>{ this.textContent = 'Сохранить'; this.disabled = false; }, 1200);
+});
+
+// Открытие/закрытие настроек
+function openSettings(){ document.getElementById('settingsOverlay').classList.add('show'); updateSettingsScrollbar(); }
+function closeSettings(){ document.getElementById('settingsOverlay').classList.remove('show'); }
+document.getElementById('menuSettingsBtn').addEventListener('click', openSettings);
+document.getElementById('settingsBtn').addEventListener('click', openSettings);
+document.getElementById('settingsClose').addEventListener('click', closeSettings);
+document.getElementById('settingsOverlay').addEventListener('click', function(e){ if(e.target===this) closeSettings(); });
+
+// Скроллбар настроек
+const settingsScrollAreaEl = document.getElementById('settingsScrollArea');
+const settingsScrollbarEl = document.getElementById('settingsScrollbar');
+const settingsScrollbarThumbEl = document.getElementById('settingsScrollbarThumb');
+function updateSettingsScrollbar(){
+  const area = settingsScrollAreaEl;
+  const trackH = settingsScrollbarEl.clientHeight;
+  if(area.scrollHeight <= area.clientHeight + 1){
+    settingsScrollbarThumbEl.style.display = 'none';
+    return;
+  }
+  settingsScrollbarThumbEl.style.display = 'block';
+  const ratio = area.clientHeight / area.scrollHeight;
+  const thumbH = Math.max(34, trackH*ratio);
+  const maxScroll = area.scrollHeight - area.clientHeight;
+  const scrollRatio = maxScroll>0 ? area.scrollTop/maxScroll : 0;
+  settingsScrollbarThumbEl.style.height = thumbH+'px';
+  settingsScrollbarThumbEl.style.top = (scrollRatio*(trackH-thumbH))+'px';
+}
+settingsScrollAreaEl.addEventListener('scroll', updateSettingsScrollbar);
+window.addEventListener('resize', ()=>{ if(document.getElementById('settingsOverlay').classList.contains('show')) updateSettingsScrollbar(); });
+let thumbDragging = false, thumbStartY = 0, thumbStartScrollTop = 0;
+settingsScrollbarThumbEl.addEventListener('pointerdown', (e)=>{
+  e.preventDefault(); e.stopPropagation();
+  thumbDragging = true;
+  thumbStartY = e.clientY;
+  thumbStartScrollTop = settingsScrollAreaEl.scrollTop;
+  try{ settingsScrollbarThumbEl.setPointerCapture(e.pointerId); }catch(err){}
+});
+settingsScrollbarThumbEl.addEventListener('pointermove', (e)=>{
+  if(!thumbDragging) return;
+  e.preventDefault();
+  const trackH = settingsScrollbarEl.clientHeight;
+  const thumbH = settingsScrollbarThumbEl.offsetHeight;
+  const maxScroll = settingsScrollAreaEl.scrollHeight - settingsScrollAreaEl.clientHeight;
+  const scrollableTrack = trackH - thumbH;
+  const deltaY = e.clientY - thumbStartY;
+  const scrollDelta = scrollableTrack>0 ? (deltaY/scrollableTrack)*maxScroll : 0;
+  settingsScrollAreaEl.scrollTop = Math.max(0, Math.min(maxScroll, thumbStartScrollTop+scrollDelta));
+});
+function endThumbDrag(){ thumbDragging = false; }
+settingsScrollbarThumbEl.addEventListener('pointerup', endThumbDrag);
+settingsScrollbarThumbEl.addEventListener('pointercancel', endThumbDrag);
+settingsScrollbarEl.addEventListener('pointerdown', (e)=>{
+  if(e.target === settingsScrollbarThumbEl) return;
+  const r = settingsScrollbarEl.getBoundingClientRect();
+  const trackH = r.height;
+  const thumbH = settingsScrollbarThumbEl.offsetHeight;
+  const maxScroll = settingsScrollAreaEl.scrollHeight - settingsScrollAreaEl.clientHeight;
+  const clickY = e.clientY - r.top - thumbH/2;
+  const ratio = Math.max(0, Math.min(1, clickY/(trackH-thumbH)));
+  settingsScrollAreaEl.scrollTop = ratio*maxScroll;
+});
+
+// ============================================================
+// 3. КАРУСЕЛЬ РЕЖИМОВ
+// ============================================================
+const MODES = [
+  { id: 'sandbox', icon: '🏝️', name: 'Песочница', desc: 'Свободная игра без противника. Все столы открыты. Забивайте шары в своё удовольствие.', badge: 'Без ограничений' },
+  { id: 'bot', icon: '🤖', name: 'С ботом', desc: 'Классическая игра против ИИ. Открывайте новые столы, побеждая бота.', badge: 'Лондон открыт · Сидней за 5 побед · Лиссабон за 10' }
+];
+
+const modeTrack = document.getElementById('modeTrack');
+const modeDots = document.getElementById('modeDots');
+const modeViewport = document.getElementById('modeViewport');
+let modeIndex = 0;
+let modeVpWidth = window.innerWidth;
+
+function buildModeCarousel(){
+  modeTrack.innerHTML = '';
+  modeDots.innerHTML = '';
+  MODES.forEach((m, i) => {
+    const slot = document.createElement('div');
+    slot.className = 'card-slot' + (i===0?' active':'');
+    slot.innerHTML = `
+      <div class="table-card" style="background:rgba(255,255,255,0.04); backdrop-filter:blur(4px); border:1px solid rgba(255,255,255,0.1);">
+        <div class="card-content" style="position:static; padding:20px; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%;">
+          <div style="font-size:60px; margin-bottom:12px;">${m.icon}</div>
+          <div style="font-family:'Playfair Display',serif; font-weight:700; font-size:32px; color:var(--gold);">${m.name}</div>
+          <div style="font-size:14px; color:#b0b8c4; margin-top:8px; max-width:280px; line-height:1.4;">${m.desc}</div>
+          <div style="margin-top:16px; display:inline-block; padding:4px 16px; border-radius:20px; background:rgba(212,175,90,0.15); color:var(--gold); font-size:12px; font-weight:600;">${m.badge}</div>
+          <button class="play-btn" data-mode="${m.id}" style="margin-top:18px;">ВЫБРАТЬ →</button>
+        </div>
+      </div>`;
+    modeTrack.appendChild(slot);
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i===0?' active':'');
+    dot.addEventListener('click', ()=> goMode(i));
+    modeDots.appendChild(dot);
+  });
+}
+buildModeCarousel();
+
+function goMode(i, animate=true){
+  modeIndex = Math.max(0, Math.min(MODES.length-1, i));
+  modeTrack.style.transition = animate ? 'transform .45s cubic-bezier(.22,.9,.31,1)' : 'none';
+  modeTrack.style.transform = `translateX(${-modeIndex*modeVpWidth}px)`;
+  [...modeTrack.children].forEach((el, idx)=>el.classList.toggle('active', idx===modeIndex));
+  [...modeDots.children].forEach((d, idx)=>d.classList.toggle('active', idx===modeIndex));
+}
+function layoutMode(){
+  modeVpWidth = modeViewport.clientWidth;
+  modeTrack.style.transition = 'none';
+  modeTrack.style.transform = `translateX(${-modeIndex*modeVpWidth}px)`;
+}
+window.addEventListener('resize', layoutMode);
+layoutMode();
+
+// Drag для режимов
+let modeDragging = false, modeDragStartX=0, modeDragDeltaX=0, modeTrackBaseX=0;
+modeViewport.addEventListener('pointerdown', (e)=>{
+  modeDragging = true;
+  modeDragStartX = e.clientX;
+  modeDragDeltaX = 0;
+  modeTrackBaseX = -modeIndex*modeVpWidth;
+  modeTrack.style.transition='none';
+  modeViewport.setPointerCapture(e.pointerId);
+});
+modeViewport.addEventListener('pointermove', (e)=>{
+  if(!modeDragging) return;
+  modeDragDeltaX = e.clientX - modeDragStartX;
+  let x = modeTrackBaseX + modeDragDeltaX;
+  const minX = -(MODES.length-1)*modeVpWidth, maxX = 0;
+  if(x>maxX) x = maxX + (x-maxX)*0.3;
+  if(x<minX) x = minX + (x-minX)*0.3;
+  modeTrack.style.transform = `translateX(${x}px)`;
+  const idx = modeIndex - modeDragDeltaX/modeVpWidth;
+  [...modeTrack.children].forEach((el, i)=>el.classList.toggle('active', Math.round(idx)===i));
+});
+function endModeDrag(){
+  if(!modeDragging) return;
+  modeDragging = false;
+  const threshold = modeVpWidth*0.16;
+  if(modeDragDeltaX < -threshold) goMode(modeIndex+1);
+  else if(modeDragDeltaX > threshold) goMode(modeIndex-1);
+  else goMode(modeIndex);
+}
+modeViewport.addEventListener('pointerup', endModeDrag);
+modeViewport.addEventListener('pointercancel', endModeDrag);
+
+// Обработка выбора режима
+modeTrack.addEventListener('click', (e)=>{
+  const btn = e.target.closest('.play-btn');
+  if(!btn) return;
+  const mode = btn.dataset.mode;
+  gameMode = mode;
+  showLocationCarousel();
+});
+
+// ============================================================
+// 4. КАРУСЕЛЬ ЛОКАЦИЙ (ПОЛНОСТЬЮ ИЗ ИСХОДНИКА)
+// ============================================================
 const LOCATIONS = [
-  {
-    id:'london', city:'Лондон', country:'Великобритания',
+  { id:'london', city:'Лондон', country:'Великобритания',
     tag:'Тёмное сукно, латунная окантовка и сине-красная графика в духе Юнион Джек.',
     flags:['#00247d','#fff','#cf142b'],
     cloth:'#0e3d2e', clothLight:'#154e3a',
@@ -466,10 +1159,8 @@ const LOCATIONS = [
     trim:'#c7a349',
     accentA:'#cf142b', accentB:'#f5f2e8', accentC:'#00247d',
     pattern:'unionjack',
-    pocket:'#050608'
-  },
-  {
-    id:'sydney', city:'Сидней', country:'Австралия',
+    pocket:'#050608' },
+  { id:'sydney', city:'Сидней', country:'Австралия',
     tag:'Изумрудное поле, золотая рама и охровые узоры аутбэка.',
     flags:['#00008b','#fff','#e4002b'],
     cloth:'#123b1f', clothLight:'#1a4f2a',
@@ -477,10 +1168,8 @@ const LOCATIONS = [
     trim:'#d7a83a',
     accentA:'#c96a1f', accentB:'#e9c46a', accentC:'#7a2e12',
     pattern:'dotart',
-    pocket:'#050403'
-  },
-  {
-    id:'lisbon', city:'Лиссабон', country:'Португалия',
+    pocket:'#050403' },
+  { id:'lisbon', city:'Лиссабон', country:'Португалия',
     tag:'Глубокий синий как атлантика, азулежу-плитка и тёплое золото.',
     flags:['#046a38','#da291c','#ffce00'],
     cloth:'#0d3a52', clothLight:'#144a68',
@@ -488,51 +1177,61 @@ const LOCATIONS = [
     trim:'#c9a24c',
     accentA:'#1c5b86', accentB:'#f4efe2', accentC:'#d99a3d',
     pattern:'azulejo',
-    pocket:'#08151d'
-  }
+    pocket:'#08151d' }
 ];
 
-/* =========================================================
-   MENU CAROUSEL
-========================================================= */
 const track = document.getElementById('track');
+const dots = document.getElementById('dots');
 const viewport = document.getElementById('viewport');
-const dotsEl = document.getElementById('dots');
-let activeIndex = 0;
-let dragging = false, dragStartX = 0, dragDeltaX = 0, trackBaseX = 0;
-let vpWidth = window.innerWidth;
+let locIndex = 0;
+let locVpWidth = window.innerWidth;
 
-LOCATIONS.forEach((loc, i)=>{
-  const slot = document.createElement('div');
-  slot.className = 'card-slot' + (i===0?' active':'');
-  slot.innerHTML = `
-    <div class="table-card" data-id="${loc.id}">
-      <div class="card-felt" style="background:radial-gradient(120% 100% at 50% 0%, ${loc.clothLight}, ${loc.cloth} 70%);"></div>
-      <canvas class="card-pattern" width="420" height="560"></canvas>
-      <div class="card-vignette"></div>
-      <div class="card-content">
-        <div class="card-flagline">${loc.flags.map(c=>`<span style="background:${c}"></span>`).join('')}</div>
-        <div class="card-city">${loc.city}</div>
-        <div class="card-tag">${loc.tag}</div>
-        <button class="play-btn" data-id="${loc.id}">ИГРАТЬ →</button>
-      </div>
-    </div>`;
-  track.appendChild(slot);
+let gameMode = 'sandbox';
+const BOT_NAMES = ['Джон','Алекс','Сергей','Мария','Елена','Михаил','Анна','Дмитрий','Ольга','Николай','Татьяна','Иван','Наталья','Андрей','Екатерина','Павел','Кристина','Артём','Виктория','Роман','Анастасия','Вадим','Евгений','Полина','Глеб','Алиса','Максим','София','Даниил','Арина'];
+let botName = 'Бот';
+const WINS_KEY = 'billiardBotWins';
+let botWins = parseInt(localStorage.getItem(WINS_KEY) || '0', 10);
+const LOCATION_UNLOCK = { london:0, sydney:5, lisbon:10 };
 
-  const dot = document.createElement('div');
-  dot.className = 'dot' + (i===0?' active':'');
-  dot.addEventListener('click', ()=> goTo(i));
-  dotsEl.appendChild(dot);
-});
+function buildLocationCarousel(){
+  track.innerHTML = '';
+  dots.innerHTML = '';
+  LOCATIONS.forEach((loc, i) => {
+    const slot = document.createElement('div');
+    slot.className = 'card-slot' + (i===0?' active':'');
+    const lockHtml = (gameMode === 'bot' && LOCATION_UNLOCK[loc.id] > 0)
+      ? `<div class="lock-badge">🔒 ${LOCATION_UNLOCK[loc.id]} побед</div>`
+      : '';
+    slot.innerHTML = `
+      <div class="table-card" data-id="${loc.id}">
+        <div class="card-felt" style="background:radial-gradient(120% 100% at 50% 0%, ${loc.clothLight}, ${loc.cloth} 70%);"></div>
+        <canvas class="card-pattern" width="420" height="560"></canvas>
+        <div class="card-vignette"></div>
+        <div class="card-content">
+          <div class="card-flagline">${loc.flags.map(c=>`<span style="background:${c}"></span>`).join('')}</div>
+          <div class="card-city">${loc.city}</div>
+          <div class="card-tag">${loc.tag}</div>
+          <button class="play-btn" data-id="${loc.id}">ИГРАТЬ →</button>
+        </div>
+        ${lockHtml}
+      </div>`;
+    track.appendChild(slot);
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i===0?' active':'');
+    dot.addEventListener('click', ()=> goLoc(i));
+    dots.appendChild(dot);
+  });
+  // Рисуем узоры
+  document.querySelectorAll('.card-pattern').forEach((c,i)=>drawCardPattern(c, LOCATIONS[i]));
+}
+buildLocationCarousel();
 
-// draw decorative pattern on each card's mini canvas
 function drawCardPattern(canvas, loc){
   const ctx = canvas.getContext('2d');
   const w = canvas.width, h = canvas.height;
   ctx.clearRect(0,0,w,h);
   if(loc.pattern==='unionjack'){
-    ctx.save();
-    ctx.globalAlpha=.5;
+    ctx.save(); ctx.globalAlpha=.5;
     ctx.strokeStyle = loc.accentB; ctx.lineWidth=10;
     ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(w,h); ctx.moveTo(w,0); ctx.lineTo(0,h); ctx.stroke();
     ctx.strokeStyle = loc.accentA; ctx.lineWidth=5;
@@ -569,71 +1268,108 @@ function drawCardPattern(canvas, loc){
     ctx.restore();
   }
 }
-document.querySelectorAll('.card-pattern').forEach((c,i)=>drawCardPattern(c, LOCATIONS[i]));
 
-function layout(){
-  vpWidth = viewport.clientWidth;
-  track.style.transition = 'none';
-  track.style.transform = `translateX(${-activeIndex*vpWidth}px)`;
-}
-window.addEventListener('resize', layout);
-layout();
-
-function setActiveVisual(idxFloat){
-  const slots = track.children;
-  for(let i=0;i<slots.length;i++){
-    slots[i].classList.toggle('active', Math.round(idxFloat)===i);
-  }
-}
-
-function goTo(i, animate=true){
-  activeIndex = Math.max(0, Math.min(LOCATIONS.length-1, i));
+function goLoc(i, animate=true){
+  locIndex = Math.max(0, Math.min(LOCATIONS.length-1, i));
   track.style.transition = animate ? 'transform .45s cubic-bezier(.22,.9,.31,1)' : 'none';
-  track.style.transform = `translateX(${-activeIndex*vpWidth}px)`;
-  setActiveVisual(activeIndex);
-  [...dotsEl.children].forEach((d,i2)=>d.classList.toggle('active', i2===activeIndex));
+  track.style.transform = `translateX(${-locIndex*locVpWidth}px)`;
+  [...track.children].forEach((el, idx)=>el.classList.toggle('active', idx===locIndex));
+  [...dots.children].forEach((d, idx)=>d.classList.toggle('active', idx===locIndex));
 }
+function layoutLoc(){
+  locVpWidth = viewport.clientWidth;
+  track.style.transition = 'none';
+  track.style.transform = `translateX(${-locIndex*locVpWidth}px)`;
+}
+window.addEventListener('resize', layoutLoc);
+layoutLoc();
 
-// touch / pointer drag for carousel
-let pointerId = null;
+// Drag для локаций
+let locDragging = false, locDragStartX=0, locDragDeltaX=0, locTrackBaseX=0;
 viewport.addEventListener('pointerdown', (e)=>{
-  dragging = true; pointerId = e.pointerId;
-  dragStartX = e.clientX; dragDeltaX = 0;
-  trackBaseX = -activeIndex*vpWidth;
+  locDragging = true;
+  locDragStartX = e.clientX;
+  locDragDeltaX = 0;
+  locTrackBaseX = -locIndex*locVpWidth;
   track.style.transition='none';
-  viewport.setPointerCapture(pointerId);
+  viewport.setPointerCapture(e.pointerId);
   document.getElementById('swipeHint').style.opacity='0';
 });
 viewport.addEventListener('pointermove', (e)=>{
-  if(!dragging) return;
-  dragDeltaX = e.clientX - dragStartX;
-  let x = trackBaseX + dragDeltaX;
-  // resistance at edges
-  const minX = -(LOCATIONS.length-1)*vpWidth, maxX = 0;
+  if(!locDragging) return;
+  locDragDeltaX = e.clientX - locDragStartX;
+  let x = locTrackBaseX + locDragDeltaX;
+  const minX = -(LOCATIONS.length-1)*locVpWidth, maxX = 0;
   if(x>maxX) x = maxX + (x-maxX)*0.3;
   if(x<minX) x = minX + (x-minX)*0.3;
   track.style.transform = `translateX(${x}px)`;
-  setActiveVisual(activeIndex - dragDeltaX/vpWidth);
+  const idx = locIndex - locDragDeltaX/locVpWidth;
+  [...track.children].forEach((el, i)=>el.classList.toggle('active', Math.round(idx)===i));
 });
-function endDrag(e){
-  if(!dragging) return;
-  dragging = false;
-  const threshold = vpWidth*0.16;
-  if(dragDeltaX < -threshold) goTo(activeIndex+1);
-  else if(dragDeltaX > threshold) goTo(activeIndex-1);
-  else goTo(activeIndex);
+function endLocDrag(){
+  if(!locDragging) return;
+  locDragging = false;
+  const threshold = locVpWidth*0.16;
+  if(locDragDeltaX < -threshold) goLoc(locIndex+1);
+  else if(locDragDeltaX > threshold) goLoc(locIndex-1);
+  else goLoc(locIndex);
 }
-viewport.addEventListener('pointerup', endDrag);
-viewport.addEventListener('pointercancel', endDrag);
+viewport.addEventListener('pointerup', endLocDrag);
+viewport.addEventListener('pointercancel', endLocDrag);
 
+// Обработка клика по кнопке "ИГРАТЬ" на локации
 track.addEventListener('click', (e)=>{
   const btn = e.target.closest('.play-btn');
-  if(btn){ startGame(btn.dataset.id); }
+  if(!btn) return;
+  const locId = btn.dataset.id;
+  if (gameMode === 'bot') {
+    const needed = LOCATION_UNLOCK[locId] || 0;
+    if (botWins < needed) {
+      alert(`Эта локация откроется после ${needed} побед над ботами. У вас пока ${botWins}.`);
+      return;
+    }
+  }
+  startGame(locId, false);
 });
 
-/* =========================================================
-   GAME CONSTANTS
-========================================================= */
+// Переключение между каруселями
+function showLocationCarousel(){
+  document.getElementById('modeCarousel').style.display = 'none';
+  document.getElementById('locationCarousel').style.display = 'flex';
+  document.getElementById('menuSub').textContent = `Режим: ${gameMode === 'sandbox' ? 'Песочница' : 'С ботом'}`;
+  // Обновить замки
+  updateLockBadges();
+  layoutLoc();
+}
+function showModeCarousel(){
+  document.getElementById('modeCarousel').style.display = 'flex';
+  document.getElementById('locationCarousel').style.display = 'none';
+  document.getElementById('menuSub').textContent = 'Выберите режим';
+}
+document.getElementById('carouselBack').addEventListener('click', showModeCarousel);
+
+function updateLockBadges(){
+  document.querySelectorAll('.table-card').forEach((card, i) => {
+    const locId = LOCATIONS[i].id;
+    const existing = card.querySelector('.lock-badge');
+    if (gameMode === 'bot' && LOCATION_UNLOCK[locId] > 0) {
+      if (!existing) {
+        const div = document.createElement('div');
+        div.className = 'lock-badge';
+        div.textContent = `🔒 ${LOCATION_UNLOCK[locId]} побед`;
+        card.appendChild(div);
+      } else {
+        existing.textContent = `🔒 ${LOCATION_UNLOCK[locId]} побед`;
+      }
+    } else {
+      if (existing) existing.remove();
+    }
+  });
+}
+
+// ============================================================
+// 5. ИГРОВАЯ ЛОГИКА (ПОЛНОСТЬЮ ИЗ ИСХОДНИКА)
+// ============================================================
 const canvas = document.getElementById('tableCanvas');
 const ctx = canvas.getContext('2d');
 const gameScreen = document.getElementById('gameScreen');
@@ -649,46 +1385,42 @@ const BALL_COLORS = {
 };
 
 let dpr = Math.min(window.devicePixelRatio||1, 2.5);
-let W=0, H=0; // CSS pixel size
-let TABLE = {x:0,y:0,w:0,h:0}; // outer rail rect
-let PLAY = {x:0,y:0,w:0,h:0}; // inner cloth rect (playable)
+let W=0, H=0;
+let TABLE = {x:0,y:0,w:0,h:0};
+let PLAY = {x:0,y:0,w:0,h:0};
 let ballR = 10;
 let pockets = [];
-let tableTexture = null; // offscreen canvas
+let tableTexture = null;
 let currentLoc = LOCATIONS[0];
 
-let balls = []; // {num, x, y, vx, vy, r, pocketed, animT}
+let balls = [];
 let cue = null;
-
-let aimDir = {x:1, y:0};      // persistent aim direction, set by dragging on the table
-let settings = { joystickEnabled: true, joystickSensitivity: 1.0 };
-let dragMode = null;          // null | 'aim' | 'power'
-let currentPower = 0;         // 0..1, set by dragging the power meter
-let strikePower = 0;          // power captured at the moment of the shot, for the thrust animation
-let cueStrikeAnim = 0;        // 0..1 forward thrust animation
-let turn = 1; // 1 or 2
-let groups = {1:null, 2:null}; // 'solid'|'stripe' assigned per player
+let aimDir = {x:1, y:0};
+let dragMode = null;
+let currentPower = 0;
+let strikePower = 0;
+let cueStrikeAnim = 0;
+let turn = 1;
+let groups = {1:null, 2:null};
 let gameOver = false;
 let firstShotTaken = false;
 let lastPocketedThisTurn = [];
 let scratchThisTurn = false;
 let eightPocketedIllegally = false;
+let isSandbox = false;
 
-const MAX_SPEED = 1550;    // px/s
-const FRICTION_PER_SEC = 0.038; // exponential decay rate factor (higher = more friction)
+const MAX_SPEED = 1550;
+const FRICTION_PER_SEC = 0.038;
 const MIN_SPEED = 4;
 
 function canShootNow(){
   return !!tableTexture && gameScreen.classList.contains('active') && !gameOver && cue && !cue.pocketed && allStopped();
 }
 
-/* =========================================================
-   SOUND — tiny synthesized SFX via Web Audio, no external files
-========================================================= */
+// Звук
 let audioCtx = null;
 let lastImpactSoundT = 0;
 let rollSource = null, rollFilter = null, rollGain = null;
-
 function ensureAudio(){
   if(!audioCtx){
     try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return; }
@@ -722,28 +1454,28 @@ function noiseBurst(duration, volume, power=2, filterFreq=null, filterQ=1){
     const f = audioCtx.createBiquadFilter();
     f.type='bandpass'; f.frequency.value=filterFreq; f.Q.value=filterQ;
     src.connect(f); f.connect(gain);
-  } else {
-    src.connect(gain);
-  }
+  } else { src.connect(gain); }
   gain.connect(audioCtx.destination);
   src.start(t);
 }
 function playCueStrike(power){
+  if(!settings.soundEnabled) return;
   ensureAudio();
   const vol = 0.2 + power*0.6;
   noiseBurst(0.05, vol, 2.5, 1900, 1.3);
   tone(140, 0.07, vol*0.4, 'sine', 70);
 }
 function playBallHit(intensity){
+  if(!settings.soundEnabled) return;
   const now = performance.now();
   if(now - lastImpactSoundT < 30) return;
   lastImpactSoundT = now;
   const vol = Math.min(0.55, 0.1 + intensity*0.55);
-  // crisp "click" of hard resin balls: filtered noise transient + a bright tone
   noiseBurst(0.045, vol*0.8, 2.2, 2600 + intensity*900, 2.2);
   tone(1500 + intensity*500, 0.045, vol*0.5, 'triangle', 700);
 }
 function playCushion(intensity){
+  if(!settings.soundEnabled) return;
   const now = performance.now();
   if(now - lastImpactSoundT < 30) return;
   lastImpactSoundT = now;
@@ -752,13 +1484,11 @@ function playCushion(intensity){
   tone(190 + intensity*90, 0.1, vol*0.7, 'sine', 100);
 }
 function playPocket(){
+  if(!settings.soundEnabled) return;
   ensureAudio();
   tone(260, 0.28, 0.4, 'sine', 65);
   noiseBurst(0.16, 0.16, 2);
 }
-
-// a quiet, persistent looping rumble whose volume tracks the balls' total
-// speed, giving a continuous "rolling across felt" texture while they move
 function ensureRollLoop(){
   if(rollSource || !audioCtx) return;
   const dur = 2;
@@ -777,19 +1507,21 @@ function ensureRollLoop(){
 }
 function updateRollSound(totalSpeed){
   if(!rollGain || !audioCtx) return;
-  const vol = Math.min(0.16, totalSpeed/5200);
+  const vol = settings.soundEnabled ? Math.min(0.16, totalSpeed/5200) : 0;
   const t = audioCtx.currentTime;
   rollGain.gain.setTargetAtTime(vol, t, 0.06);
   rollFilter.frequency.setTargetAtTime(260 + Math.min(500, totalSpeed*0.35), t, 0.08);
 }
+function vibrate(pattern){
+  if(settings.vibrationEnabled && navigator.vibrate){ try{ navigator.vibrate(pattern); }catch(e){} }
+}
 
-
+// Физика, рендеринг, HUD и т.д. (без изменений)
 function resizeCanvas(){
   W = window.innerWidth; H = window.innerHeight;
   canvas.width = W*dpr; canvas.height = H*dpr;
   canvas.style.width = W+'px'; canvas.style.height = H+'px';
   ctx.setTransform(dpr,0,0,dpr,0,0);
-
   const topPad = 76, bottomPad = 74, leftPad = 56, rightPad = 58;
   const availW = W - leftPad - rightPad;
   const availH = H - topPad - bottomPad;
@@ -797,66 +1529,113 @@ function resizeCanvas(){
   if(th > availH){ th = availH; tw = th*2; }
   TABLE.w = tw; TABLE.h = th;
   TABLE.x = leftPad + (availW-tw)/2; TABLE.y = topPad + (availH-th)/2;
-
   const railThickness = tw*0.045;
   PLAY.x = TABLE.x + railThickness; PLAY.y = TABLE.y + railThickness;
   PLAY.w = TABLE.w - railThickness*2; PLAY.h = TABLE.h - railThickness*2;
-
   ballR = PLAY.w/74;
-
   pockets = [
     {x:PLAY.x, y:PLAY.y, corner:true}, {x:PLAY.x+PLAY.w/2, y:PLAY.y-railThickness*0.32, corner:false}, {x:PLAY.x+PLAY.w, y:PLAY.y, corner:true},
     {x:PLAY.x, y:PLAY.y+PLAY.h, corner:true}, {x:PLAY.x+PLAY.w/2, y:PLAY.y+PLAY.h+railThickness*0.32, corner:false}, {x:PLAY.x+PLAY.w, y:PLAY.y+PLAY.h, corner:true}
   ].map(p=>({x:p.x, y:p.y, r:ballR*(p.corner?2.5:2.05), corner:p.corner}));
-
   buildTableTexture();
 }
-
-/* ---------- pre-rendered felt + rails + decoration ---------- */
 function buildTableTexture(){
   const off = document.createElement('canvas');
   off.width = TABLE.w*dpr; off.height = TABLE.h*dpr;
   const tctx = off.getContext('2d');
   tctx.setTransform(dpr,0,0,dpr,0,0);
   const loc = currentLoc;
-  const ox = -TABLE.x, oy = -TABLE.y; // shift so drawing uses TABLE-relative coords directly (we draw with TABLE.x offsets baked in below)
-
-  // draw rail (outer) rounded rect
-  const rail = ()=>{
-    tctx.save();
-    roundRectPath(tctx, 0,0, TABLE.w, TABLE.h, TABLE.w*0.045);
-    const grad = tctx.createLinearGradient(0,0,0,TABLE.h);
-    grad.addColorStop(0, loc.railLight); grad.addColorStop(1, loc.rail);
-    tctx.fillStyle = grad; tctx.fill();
-    tctx.restore();
-  };
-  rail();
-
-  // rail decoration band
-  drawRailDecoration(tctx, loc, TABLE.w, TABLE.h);
-
-  // inner cloth
+  function roundRectPath(c,x,y,w,h,r){
+    c.beginPath();
+    c.moveTo(x+r,y);
+    c.arcTo(x+w,y,x+w,y+h,r);
+    c.arcTo(x+w,y+h,x,y+h,r);
+    c.arcTo(x,y+h,x,y,r);
+    c.arcTo(x,y,x+w,y,r);
+    c.closePath();
+  }
+  function drawDiamond(c,x,y,s){
+    c.beginPath();
+    c.moveTo(x, y-s); c.lineTo(x+s,y); c.lineTo(x,y+s); c.lineTo(x-s,y); c.closePath();
+    c.fill();
+  }
+  function drawRailDecoration(c, loc, w, h){
+    const rt = w*0.045;
+    c.save();
+    if(loc.pattern==='unionjack'){
+      [0, w].forEach((cx, i)=>{
+        c.save();
+        c.translate(cx, h/2);
+        const dir = i===0?1:-1;
+        c.beginPath();
+        c.moveTo(0,-h*0.14); c.lineTo(dir*rt*1.6,0); c.lineTo(0,h*0.14); c.closePath();
+        c.fillStyle = loc.accentC; c.globalAlpha=.9; c.fill();
+        c.beginPath();
+        c.moveTo(0,-h*0.07); c.lineTo(dir*rt*0.9,0); c.lineTo(0,h*0.07); c.closePath();
+        c.fillStyle = loc.accentA; c.fill();
+        c.restore();
+      });
+      c.strokeStyle = loc.trim; c.globalAlpha=.7; c.lineWidth = rt*0.06;
+      roundRectPath(c, rt*0.5, rt*0.5, w-rt, h-rt, w*0.04);
+      c.stroke();
+    } else if(loc.pattern==='dotart'){
+      c.globalAlpha=.9;
+      const cols=[loc.accentA, loc.accentB, loc.accentC, '#f2ede2'];
+      let seed=42;
+      function rnd(){ seed=(seed*9301+49297)%233280; return seed/233280; }
+      for(let i=0;i<220;i++){
+        let x,y;
+        const edge = rnd();
+        if(edge<0.5){ x = rnd()*w; y = rnd()<0.5? rnd()*rt*1.4 : h-rnd()*rt*1.4; }
+        else { x = rnd()<0.5? rnd()*rt*1.4 : w-rnd()*rt*1.4; y = rnd()*h; }
+        const r = 2+rnd()*5;
+        c.fillStyle = cols[i%cols.length];
+        c.beginPath(); c.arc(x,y,r,0,7); c.fill();
+      }
+      c.strokeStyle = loc.trim; c.globalAlpha=.8; c.lineWidth=rt*0.05;
+      roundRectPath(c, rt*0.5, rt*0.5, w-rt, h-rt, w*0.04);
+      c.stroke();
+    } else if(loc.pattern==='azulejo'){
+      const tile = rt*1.5;
+      c.strokeStyle = loc.accentA; c.globalAlpha=.55; c.lineWidth=2;
+      for(let x=0;x<w;x+=tile){
+        c.beginPath(); c.arc(x,rt*0.5,tile*0.42,0,7); c.stroke();
+        c.beginPath(); c.arc(x,h-rt*0.5,tile*0.42,0,7); c.stroke();
+      }
+      for(let y=0;y<h;y+=tile){
+        c.beginPath(); c.arc(rt*0.5,y,tile*0.42,0,7); c.stroke();
+        c.beginPath(); c.arc(w-rt*0.5,y,tile*0.42,0,7); c.stroke();
+      }
+      c.strokeStyle = loc.trim; c.globalAlpha=.9; c.lineWidth=rt*0.07;
+      roundRectPath(c, rt*0.42, rt*0.42, w-rt*0.84, h-rt*0.84, w*0.04);
+      c.stroke();
+    }
+    c.restore();
+  }
   const railThickness = TABLE.w*0.045;
+  tctx.save();
+  roundRectPath(tctx, 0,0, TABLE.w, TABLE.h, TABLE.w*0.045);
+  const grad = tctx.createLinearGradient(0,0,0,TABLE.h);
+  grad.addColorStop(0, loc.railLight); grad.addColorStop(1, loc.rail);
+  tctx.fillStyle = grad; tctx.fill();
+  tctx.restore();
+  drawRailDecoration(tctx, loc, TABLE.w, TABLE.h);
   tctx.save();
   roundRectPath(tctx, railThickness, railThickness, TABLE.w-railThickness*2, TABLE.h-railThickness*2, TABLE.w*0.012);
   const cgrad = tctx.createRadialGradient(TABLE.w/2, TABLE.h*0.35, TABLE.h*0.15, TABLE.w/2, TABLE.h/2, TABLE.w*0.7);
   cgrad.addColorStop(0, loc.clothLight); cgrad.addColorStop(1, loc.cloth);
   tctx.fillStyle = cgrad; tctx.fill();
   tctx.clip();
-  // subtle cloth fiber lines
   tctx.globalAlpha = 0.05;
   tctx.strokeStyle = '#000';
   for(let x=railThickness; x<TABLE.w-railThickness; x+=4){
     tctx.beginPath(); tctx.moveTo(x,railThickness); tctx.lineTo(x,TABLE.h-railThickness); tctx.stroke();
   }
   tctx.globalAlpha=1;
-  // inner shadow near rails
   tctx.strokeStyle='rgba(0,0,0,.35)'; tctx.lineWidth=railThickness*0.5;
   roundRectPath(tctx, railThickness, railThickness, TABLE.w-railThickness*2, TABLE.h-railThickness*2, TABLE.w*0.012);
   tctx.stroke();
   tctx.restore();
-
-  // diamonds/sights on rail
   tctx.save();
   tctx.fillStyle = loc.trim; tctx.globalAlpha=.85;
   const dCount=7;
@@ -872,11 +1651,8 @@ function buildTableTexture(){
     drawDiamond(tctx, TABLE.w-railThickness*0.5, dy, railThickness*0.14);
   }
   tctx.restore();
-
-  // pockets (relative to TABLE)
   pockets.forEach(p=>{
     const px = p.x - TABLE.x, py = p.y - TABLE.y;
-    // solid opaque base disc first so no felt is ever visible at the seam
     tctx.fillStyle = loc.pocket;
     tctx.beginPath(); tctx.arc(px,py,p.r*1.06,0,7); tctx.fill();
     const pg = tctx.createRadialGradient(px,py,p.r*0.15, px,py,p.r);
@@ -887,85 +1663,9 @@ function buildTableTexture(){
     tctx.beginPath(); tctx.arc(px,py,p.r*0.82,0,7); tctx.stroke();
     tctx.globalAlpha=1;
   });
-
   tableTexture = off;
 }
 
-function drawDiamond(c,x,y,s){
-  c.beginPath();
-  c.moveTo(x, y-s); c.lineTo(x+s,y); c.lineTo(x,y+s); c.lineTo(x-s,y); c.closePath();
-  c.fill();
-}
-
-function roundRectPath(c,x,y,w,h,r){
-  c.beginPath();
-  c.moveTo(x+r,y);
-  c.arcTo(x+w,y,x+w,y+h,r);
-  c.arcTo(x+w,y+h,x,y+h,r);
-  c.arcTo(x,y+h,x,y,r);
-  c.arcTo(x,y,x+w,y,r);
-  c.closePath();
-}
-
-function drawRailDecoration(c, loc, w, h){
-  const rt = w*0.045;
-  c.save();
-  if(loc.pattern==='unionjack'){
-    // corner triangular flashes near each short rail end, subtle diagonal red/white/navy accents
-    [0, w].forEach((cx, i)=>{
-      c.save();
-      c.translate(cx, h/2);
-      const dir = i===0?1:-1;
-      c.beginPath();
-      c.moveTo(0,-h*0.14); c.lineTo(dir*rt*1.6,0); c.lineTo(0,h*0.14); c.closePath();
-      c.fillStyle = loc.accentC; c.globalAlpha=.9; c.fill();
-      c.beginPath();
-      c.moveTo(0,-h*0.07); c.lineTo(dir*rt*0.9,0); c.lineTo(0,h*0.07); c.closePath();
-      c.fillStyle = loc.accentA; c.fill();
-      c.restore();
-    });
-    // thin gold pinstripe along inner rail edge
-    c.strokeStyle = loc.trim; c.globalAlpha=.7; c.lineWidth = rt*0.06;
-    roundRectPath(c, rt*0.5, rt*0.5, w-rt, h-rt, w*0.04);
-    c.stroke();
-  } else if(loc.pattern==='dotart'){
-    c.globalAlpha=.9;
-    const cols=[loc.accentA, loc.accentB, loc.accentC, '#f2ede2'];
-    let seed=42;
-    function rnd(){ seed=(seed*9301+49297)%233280; return seed/233280; }
-    for(let i=0;i<220;i++){
-      let x,y;
-      const edge = rnd();
-      if(edge<0.5){ x = rnd()*w; y = rnd()<0.5? rnd()*rt*1.4 : h-rnd()*rt*1.4; }
-      else { x = rnd()<0.5? rnd()*rt*1.4 : w-rnd()*rt*1.4; y = rnd()*h; }
-      const r = 2+rnd()*5;
-      c.fillStyle = cols[i%cols.length];
-      c.beginPath(); c.arc(x,y,r,0,7); c.fill();
-    }
-    c.strokeStyle = loc.trim; c.globalAlpha=.8; c.lineWidth=rt*0.05;
-    roundRectPath(c, rt*0.5, rt*0.5, w-rt, h-rt, w*0.04);
-    c.stroke();
-  } else if(loc.pattern==='azulejo'){
-    const tile = rt*1.5;
-    c.strokeStyle = loc.accentA; c.globalAlpha=.55; c.lineWidth=2;
-    for(let x=0;x<w;x+=tile){
-      c.beginPath(); c.arc(x,rt*0.5,tile*0.42,0,7); c.stroke();
-      c.beginPath(); c.arc(x,h-rt*0.5,tile*0.42,0,7); c.stroke();
-    }
-    for(let y=0;y<h;y+=tile){
-      c.beginPath(); c.arc(rt*0.5,y,tile*0.42,0,7); c.stroke();
-      c.beginPath(); c.arc(w-rt*0.5,y,tile*0.42,0,7); c.stroke();
-    }
-    c.strokeStyle = loc.trim; c.globalAlpha=.9; c.lineWidth=rt*0.07;
-    roundRectPath(c, rt*0.42, rt*0.42, w-rt*0.84, h-rt*0.84, w*0.04);
-    c.stroke();
-  }
-  c.restore();
-}
-
-/* =========================================================
-   RACK / BALLS
-========================================================= */
 function rackBalls(){
   balls = [];
   const footX = PLAY.x + PLAY.w*0.74;
@@ -989,57 +1689,59 @@ function rackBalls(){
   cue = makeBall(0, PLAY.x + PLAY.w*0.22, PLAY.y + PLAY.h/2);
   balls.push(cue);
 }
-
 function makeBall(num, x, y){
   return {num, x, y, vx:0, vy:0, r:ballR, pocketed:false, popT:0, spin:0};
 }
 
-/* =========================================================
-   INPUT
-   - dragging on the table sets the AIM DIRECTION only
-   - dragging the vertical bar on the left sets the POWER and,
-     on release, fires the shot
-========================================================= */
+// Ввод
 const powerMeterEl = document.getElementById('powerMeter');
 const powerFillEl = document.getElementById('powerFill');
 const powerHintEl = document.getElementById('powerHint');
+let touchTargetAngle = null;
+
+function sensitivityToRate(value){ return Math.pow(2, (value-1)/2); }
+
+function updateAimTargetFromPoint(px, py){
+  const dx = cue.x - px, dy = cue.y - py;
+  const dist = Math.hypot(dx,dy);
+  if(dist < 6) return;
+  touchTargetAngle = Math.atan2(dy, dx);
+}
+function updateTouchRotation(dt){
+  if(dragMode !== 'aim' || touchTargetAngle===null) return;
+  const curAngle = Math.atan2(aimDir.y, aimDir.x);
+  let diff = touchTargetAngle - curAngle;
+  while(diff > Math.PI) diff -= Math.PI*2;
+  while(diff < -Math.PI) diff += Math.PI*2;
+  const baseRate = 14;
+  const rate = baseRate * sensitivityToRate(settings.touchSensitivity);
+  const step = Math.sign(diff) * Math.min(Math.abs(diff), rate*dt);
+  aimDir = {x:Math.cos(curAngle+step), y:Math.sin(curAngle+step)};
+}
 
 canvas.addEventListener('pointerdown', (e)=>{
   ensureAudio();
-  if(!canShootNow() || settings.joystickEnabled) return;
+  if(!canShootNow() || !settings.touchEnabled) return;
   e.preventDefault();
   dragMode = 'aim';
   const r = canvas.getBoundingClientRect();
-  updateAimFromPoint(e.clientX-r.left, e.clientY-r.top);
+  updateAimTargetFromPoint(e.clientX-r.left, e.clientY-r.top);
   try{ canvas.setPointerCapture(e.pointerId); }catch(err){}
 });
 canvas.addEventListener('pointermove', (e)=>{
   if(dragMode !== 'aim') return;
   e.preventDefault();
   const r = canvas.getBoundingClientRect();
-  updateAimFromPoint(e.clientX-r.left, e.clientY-r.top);
+  updateAimTargetFromPoint(e.clientX-r.left, e.clientY-r.top);
 });
-canvas.addEventListener('pointerup', (e)=>{
-  if(dragMode !== 'aim') return;
-  dragMode = null;
-});
+canvas.addEventListener('pointerup', (e)=>{ if(dragMode==='aim') dragMode=null; });
 canvas.addEventListener('pointercancel', ()=>{ if(dragMode==='aim') dragMode=null; });
 
-function updateAimFromPoint(px, py){
-  const dx = cue.x - px, dy = cue.y - py;
-  const dist = Math.hypot(dx,dy);
-  if(dist < 6) return;
-  aimDir = {x:dx/dist, y:dy/dist};
-}
-
-/* joystick — a "steering" control: the further you push it, the faster the
-   aim direction rotates towards that side, scaled by the sensitivity
-   setting. Releasing it springs the knob back to center; the aim direction
-   itself stays wherever it ended up, same as the table-drag method. */
+// Джойстик
 const joystickEl = document.getElementById('joystick');
 const joystickKnobEl = document.getElementById('joystickKnob');
 let joyDragging = false;
-let joyDeflection = {x:0, y:0}; // normalized -1..1, updated on pointermove
+let joyDeflection = {x:0, y:0};
 
 function updateJoystick(clientX, clientY){
   const rect = joystickEl.getBoundingClientRect();
@@ -1077,9 +1779,6 @@ function endJoystick(){
 joystickEl.addEventListener('pointerup', endJoystick);
 joystickEl.addEventListener('pointercancel', endJoystick);
 
-// continuously rotates aimDir towards the direction the knob is pushed,
-// at a speed proportional to how far it's pushed and to sensitivity —
-// called every frame from the main loop while the joystick is held
 function updateJoystickRotation(dt){
   if(!joyDragging) return;
   const mag = Math.min(1, Math.hypot(joyDeflection.x, joyDeflection.y));
@@ -1089,11 +1788,47 @@ function updateJoystickRotation(dt){
   let diff = targetAngle - curAngle;
   while(diff > Math.PI) diff -= Math.PI*2;
   while(diff < -Math.PI) diff += Math.PI*2;
-  const maxTurnRate = 5.2; // rad/s at full deflection, sensitivity 1.0
-  const step = Math.sign(diff) * Math.min(Math.abs(diff), maxTurnRate*settings.joystickSensitivity*mag*dt);
+  const maxTurnRate = 5.2;
+  const rate = maxTurnRate * sensitivityToRate(settings.joystickSensitivity) * mag;
+  const step = Math.sign(diff) * Math.min(Math.abs(diff), rate*dt);
   const newAngle = curAngle + step;
   aimDir = {x:Math.cos(newAngle), y:Math.sin(newAngle)};
 }
+
+// Кнопки
+const cueBtnLeftEl = document.getElementById('cueBtnLeft');
+const cueBtnRightEl = document.getElementById('cueBtnRight');
+let btnRotateDir = 0;
+function setupCueBtn(el, dir){
+  const start = (e)=>{
+    ensureAudio();
+    if(!canShootNow() || !settings.buttonsEnabled) return;
+    e.preventDefault();
+    btnRotateDir = dir;
+    el.classList.add('pressed');
+    try{ el.setPointerCapture(e.pointerId); }catch(err){}
+  };
+  const stop = ()=>{ if(btnRotateDir===dir) btnRotateDir = 0; el.classList.remove('pressed'); };
+  el.addEventListener('pointerdown', start);
+  el.addEventListener('pointerup', stop);
+  el.addEventListener('pointercancel', stop);
+}
+setupCueBtn(cueBtnLeftEl, -1);
+setupCueBtn(cueBtnRightEl, 1);
+function updateButtonRotation(dt){
+  if(btnRotateDir === 0) return;
+  const baseRate = 3.4;
+  const curAngle = Math.atan2(aimDir.y, aimDir.x);
+  const newAngle = curAngle + btnRotateDir*baseRate*sensitivityToRate(settings.buttonsSensitivity)*dt;
+  aimDir = {x:Math.cos(newAngle), y:Math.sin(newAngle)};
+}
+
+function applyControlVisibility(){
+  joystickEl.style.display = settings.joystickEnabled ? 'flex' : 'none';
+  cueBtnLeftEl.style.display = settings.buttonsEnabled ? 'flex' : 'none';
+  cueBtnRightEl.style.display = settings.buttonsEnabled ? 'flex' : 'none';
+}
+applyControlVisibility();
 
 function fireShot(){
   strikePower = currentPower;
@@ -1101,6 +1836,7 @@ function fireShot(){
   cue.vy = aimDir.y*currentPower*MAX_SPEED;
   cueStrikeAnim = 1;
   playCueStrike(currentPower);
+  vibrate(Math.round(10 + currentPower*35));
   firstShotTaken = true;
   lastPocketedThisTurn = [];
   scratchThisTurn = false;
@@ -1109,25 +1845,19 @@ function fireShot(){
   setPowerHandle(0);
   powerHintEl.style.opacity = '0';
 }
-
-// positions the slider handle: power 0 -> resting at the TOP (green zone),
-// power 1 -> all the way down at the BOTTOM (red zone). Pulling the handle
-// down increases power.
 function setPowerHandle(power){
   const r = powerMeterEl.getBoundingClientRect();
   const handleH = 13;
   const usable = Math.max(0, r.height - handleH);
   powerFillEl.style.top = (power*usable) + 'px';
 }
-
 function updatePowerFromEvent(e){
   const r = powerMeterEl.getBoundingClientRect();
   let rel = (e.clientY - r.top) / r.height;
   rel = Math.max(0, Math.min(1, rel));
-  currentPower = rel; // top of bar = 0 power, bottom = full power (drag down = stronger)
+  currentPower = rel;
   setPowerHandle(currentPower);
 }
-
 powerMeterEl.addEventListener('pointerdown', (e)=>{
   ensureAudio();
   if(!canShootNow()) return;
@@ -1145,94 +1875,21 @@ powerMeterEl.addEventListener('pointerup', (e)=>{
   if(dragMode !== 'power') return;
   e.preventDefault();
   dragMode = null;
-  if(currentPower > 0.045){
-    fireShot();
-  } else {
-    currentPower = 0;
-    setPowerHandle(0);
-  }
+  if(currentPower > 0.045) fireShot();
+  else { currentPower = 0; setPowerHandle(0); }
 });
-powerMeterEl.addEventListener('pointercancel', ()=>{
-  dragMode = null; currentPower = 0; setPowerHandle(0);
-});
+powerMeterEl.addEventListener('pointercancel', ()=>{ dragMode = null; currentPower = 0; setPowerHandle(0); });
 
-
-document.getElementById('backBtn').addEventListener('click', ()=>{
-  gameScreen.classList.remove('active');
-  menuEl.classList.remove('hidden');
-});
-document.getElementById('resetBtn').addEventListener('click', ()=>{
-  startGame(currentLoc.id, true);
-});
-document.getElementById('msgBtn').addEventListener('click', ()=>{
-  document.getElementById('msgOverlay').classList.remove('show');
-  startGame(currentLoc.id, true);
-});
-
-/* ---------- SETTINGS ---------- */
-const settingsOverlayEl = document.getElementById('settingsOverlay');
-const sensitivityRowEl = document.getElementById('sensitivityRow');
-const joystickToggleEl = document.getElementById('joystickToggle');
-const sensitivitySliderEl = document.getElementById('sensitivitySlider');
-const sensitivityValueEl = document.getElementById('sensitivityValue');
-
-function openSettings(){ settingsOverlayEl.classList.add('show'); }
-function closeSettings(){ settingsOverlayEl.classList.remove('show'); }
-
-document.getElementById('menuSettingsBtn').addEventListener('click', openSettings);
-document.getElementById('settingsBtn').addEventListener('click', openSettings);
-document.getElementById('settingsClose').addEventListener('click', closeSettings);
-settingsOverlayEl.addEventListener('click', (e)=>{ if(e.target===settingsOverlayEl) closeSettings(); });
-
-function applySensitivityRowState(){
-  sensitivityRowEl.style.opacity = settings.joystickEnabled ? '1' : '.4';
-  sensitivityRowEl.style.pointerEvents = settings.joystickEnabled ? 'auto' : 'none';
-}
-applySensitivityRowState();
-
-joystickToggleEl.addEventListener('change', (e)=>{
-  settings.joystickEnabled = e.target.checked;
-  applySensitivityRowState();
-  // switching modes mid-turn shouldn't leave a stuck drag or a floating knob
-  dragMode = null;
-  endJoystick();
-});
-sensitivitySliderEl.addEventListener('input', (e)=>{
-  settings.joystickSensitivity = parseFloat(e.target.value);
-  sensitivityValueEl.textContent = settings.joystickSensitivity.toFixed(1)+'×';
-});
-
-/* =========================================================
-   PHYSICS
-========================================================= */
+// Физика
 function allStopped(){
   return balls.every(b => b.pocketed || (Math.abs(b.vx)<MIN_SPEED && Math.abs(b.vy)<MIN_SPEED));
 }
-
-let lastT = performance.now();
-function step(now){
-  let dt = (now-lastT)/1000;
-  lastT = now;
-  dt = Math.min(dt, 0.032);
-
-  updateJoystickRotation(dt);
-  updatePhysics(dt);
-  render();
-  requestAnimationFrame(step);
-}
-
 function updatePhysics(dt){
   if(!tableTexture || !gameScreen.classList.contains('active')) return;
   const decay = Math.exp(-FRICTION_PER_SEC*60*dt);
   let totalSpeed = 0;
   for(const b of balls){
-    if(b.pocketed){
-      b.popT = Math.min(1, b.popT + dt*3.2);
-      continue;
-    }
-
-    // gentle "lip" pull: a slow ball rolling close past a pocket mouth gets
-    // nudged in, like a real ball dropping off the edge instead of skating by
+    if(b.pocketed){ b.popT = Math.min(1, b.popT + dt*3.2); continue; }
     const speed = Math.hypot(b.vx,b.vy);
     if(speed > 4 && speed < 340){
       for(const p of pockets){
@@ -1245,36 +1902,22 @@ function updatePhysics(dt){
         }
       }
     }
-
     b.x += b.vx*dt; b.y += b.vy*dt;
     b.vx *= decay; b.vy *= decay;
     if(Math.abs(b.vx)<MIN_SPEED) b.vx=0;
     if(Math.abs(b.vy)<MIN_SPEED) b.vy=0;
     totalSpeed += Math.hypot(b.vx,b.vy);
-
-    // check pockets BEFORE clamping to the rails — the rail clamp keeps a
-    // ball's center at least one radius away from both walls at once, which
-    // made the corner pockets mathematically unreachable if checked after.
     let sunk = false;
     for(const p of pockets){
       const d = Math.hypot(b.x-p.x, b.y-p.y);
-      if(d < p.r*0.8){
-        b.pocketed = true; b.popT = 0;
-        onPocket(b);
-        sunk = true;
-        break;
-      }
+      if(d < p.r*0.8){ b.pocketed = true; b.popT = 0; onPocket(b); sunk = true; break; }
     }
     if(sunk) continue;
-
-    // rail collisions
     if(b.x - b.r < PLAY.x){ b.x = PLAY.x + b.r; b.vx = Math.abs(b.vx)*0.92; if(Math.abs(b.vx)>30) playCushion(Math.min(1,Math.abs(b.vx)/MAX_SPEED)); }
     if(b.x + b.r > PLAY.x+PLAY.w){ b.x = PLAY.x+PLAY.w-b.r; b.vx = -Math.abs(b.vx)*0.92; if(Math.abs(b.vx)>30) playCushion(Math.min(1,Math.abs(b.vx)/MAX_SPEED)); }
     if(b.y - b.r < PLAY.y){ b.y = PLAY.y + b.r; b.vy = Math.abs(b.vy)*0.92; if(Math.abs(b.vy)>30) playCushion(Math.min(1,Math.abs(b.vy)/MAX_SPEED)); }
     if(b.y + b.r > PLAY.y+PLAY.h){ b.y = PLAY.y+PLAY.h-b.r; b.vy = -Math.abs(b.vy)*0.92; if(Math.abs(b.vy)>30) playCushion(Math.min(1,Math.abs(b.vy)/MAX_SPEED)); }
   }
-
-  // ball-ball collisions
   for(let i=0;i<balls.length;i++){
     const a = balls[i]; if(a.pocketed) continue;
     for(let j=i+1;j<balls.length;j++){
@@ -1295,44 +1938,26 @@ function updatePhysics(dt){
       }
     }
   }
-
-  // a final safety pass — catches balls nudged into a pocket by a collision
-  // that happened above, after the per-ball early check already ran
   for(const b of balls){
     if(b.pocketed) continue;
     for(const p of pockets){
       const d = Math.hypot(b.x-p.x, b.y-p.y);
-      if(d < p.r*0.8){
-        b.pocketed = true; b.popT = 0;
-        onPocket(b);
-        break;
-      }
+      if(d < p.r*0.8){ b.pocketed = true; b.popT = 0; onPocket(b); break; }
     }
   }
-
   updateRollSound(totalSpeed);
-
-  if(cueStrikeAnim>0){ cueStrikeAnim = Math.max(0, cueStrikeAnim - dt*4.2); }
-
-  if(firstShotTaken && allStopped()){
-    resolveTurn();
-    firstShotTaken = false;
-  }
+  if(cueStrikeAnim>0) cueStrikeAnim = Math.max(0, cueStrikeAnim - dt*4.2);
+  if(firstShotTaken && allStopped()){ resolveTurn(); firstShotTaken = false; }
 }
 
 function onPocket(b){
   playPocket();
-  if(b.num===0){
-    scratchThisTurn = true;
-    return;
-  }
-  if(b.num===8){
-    eightPocketedIllegally = !isEightLegal();
-  }
+  vibrate(b.num===0 ? [20,40,20] : 35);
+  if(b.num===0){ scratchThisTurn = true; return; }
+  if(b.num===8){ eightPocketedIllegally = !isEightLegal(); }
   lastPocketedThisTurn.push(b.num);
   addToPocketTray(b.num);
 }
-
 function addToPocketTray(num){
   const tray = document.getElementById('pocketTray');
   const d = document.createElement('div');
@@ -1344,39 +1969,43 @@ function addToPocketTray(num){
   tray.appendChild(d);
   tray.scrollTop = tray.scrollHeight;
 }
-
 function isEightLegal(){
   const g = groups[turn];
   if(!g) return false;
   const nums = g==='solid' ? [1,2,3,4,5,6,7] : [9,10,11,12,13,14,15];
   return nums.every(n => balls.find(x=>x.num===n).pocketed);
 }
-
 function resolveTurn(){
-  // handle scratch: respot cue ball
   if(scratchThisTurn){
     cue.pocketed=false; cue.popT=0; cue.vx=0; cue.vy=0;
     cue.x = PLAY.x+PLAY.w*0.22; cue.y = PLAY.y+PLAY.h/2;
   }
-
   const pocketedNums = lastPocketedThisTurn.filter(n=>n!==8);
-  // assign groups if not yet assigned and something legal pocketed
+  if(isSandbox){
+    if(!gameOver){
+      if(scratchThisTurn){
+        cue.pocketed=false; cue.popT=0; cue.vx=0; cue.vy=0;
+        cue.x = PLAY.x+PLAY.w*0.22; cue.y = PLAY.y+PLAY.h/2;
+        scratchThisTurn = false;
+      }
+      document.getElementById('hudTurn').textContent = 'Песочница — ваша очередь';
+    }
+    return;
+  }
+  // Режим бота
   if(!groups[1] && !groups[2] && pocketedNums.length>0 && !scratchThisTurn){
     const n = pocketedNums[0];
     const isSolid = n<=7;
-    groups[turn] = isSolid? 'solid':'stripe';
-    groups[turn===1?2:1] = isSolid? 'stripe':'solid';
+    groups[1] = isSolid? 'solid':'stripe';
+    groups[2] = isSolid? 'stripe':'solid';
   }
-
   if(lastPocketedThisTurn.includes(8)){
     gameOver = true;
     const win = !eightPocketedIllegally && !scratchThisTurn;
-    showMessage(win, turn);
-    updateTray();
-    updateHud();
+    if(win){ botWins++; localStorage.setItem(WINS_KEY, String(botWins)); }
+    showMessage(win, 1);
     return;
   }
-
   let ownPocketed = false;
   if(groups[turn]){
     const wanted = groups[turn]==='solid' ? n=>n>=1&&n<=7 : n=>n>=9&&n<=15;
@@ -1384,12 +2013,52 @@ function resolveTurn(){
   } else {
     ownPocketed = pocketedNums.length>0;
   }
-
   if(scratchThisTurn || !ownPocketed){
-    turn = turn===1?2:1;
+    turn = 2;
+    scheduleBotTurn();
+  } else {
+    turn = 1;
+    document.getElementById('hudTurn').textContent = `Игрок 1 — целится (против ${botName})`;
   }
-  updateTray();
-  updateHud();
+  updateTray(); updateHud();
+}
+
+function scheduleBotTurn(){
+  setTimeout(()=>{
+    if(gameOver) return;
+    document.getElementById('hudTurn').textContent = `${botName} думает...`;
+    botTurn();
+  }, 700);
+}
+function botTurn(){
+  if(gameOver) return;
+  let myGroup = groups[2];
+  let targetBalls = balls.filter(b => !b.pocketed && b.num !== 0);
+  if(myGroup){
+    const isSolid = myGroup === 'solid';
+    targetBalls = targetBalls.filter(b => (isSolid ? b.num >= 1 && b.num <= 7 : b.num >= 9 && b.num <= 15));
+  } else {
+    targetBalls = targetBalls.filter(b => b.num !== 8);
+  }
+  if(targetBalls.length === 0){
+    targetBalls = balls.filter(b => !b.pocketed && b.num !== 0 && b.num !== 8);
+    if(targetBalls.length === 0) return;
+  }
+  const chosen = targetBalls[Math.floor(Math.random() * targetBalls.length)];
+  let bestPocket = null, bestDist = Infinity;
+  for(const p of pockets){
+    const d = Math.hypot(p.x-chosen.x, p.y-chosen.y);
+    if(d < bestDist){ bestDist = d; bestPocket = p; }
+  }
+  if(!bestPocket) return;
+  const dx = bestPocket.x-chosen.x, dy = bestPocket.y-chosen.y;
+  const len = Math.hypot(dx,dy) || 1;
+  aimDir = { x: dx/len, y: dy/len };
+  const power = 0.3 + Math.random()*0.5;
+  currentPower = power;
+  setPowerHandle(power);
+  fireShot();
+  document.getElementById('hudTurn').textContent = `${botName} ударил...`;
 }
 
 function showMessage(win, byPlayer){
@@ -1401,56 +2070,41 @@ function showMessage(win, byPlayer){
   overlay.classList.add('show');
 }
 
-/* =========================================================
-   RENDER
-========================================================= */
+// Рендеринг
 function render(){
   if(!tableTexture || !gameScreen.classList.contains('active')) return;
   ctx.clearRect(0,0,W,H);
-  // ambient backdrop
   const bg = ctx.createRadialGradient(W/2,H*0.3,H*0.1, W/2,H/2, W*0.8);
   bg.addColorStop(0,'#181d24'); bg.addColorStop(1,'#06070a');
   ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
-
-  // table shadow
   ctx.save();
   ctx.shadowColor='rgba(0,0,0,.55)'; ctx.shadowBlur=40; ctx.shadowOffsetY=22;
   ctx.drawImage(tableTexture, TABLE.x, TABLE.y, TABLE.w, TABLE.h);
   ctx.restore();
-
-  // balls sorted by y for pseudo depth (not essential but nice)
   const sorted = [...balls].sort((a,b)=>a.y-b.y);
-
   const showCue = canShootNow();
   powerMeterEl.classList.toggle('show', showCue);
   joystickEl.classList.toggle('show', showCue && settings.joystickEnabled);
-
+  cueBtnLeftEl.classList.toggle('show', showCue && settings.buttonsEnabled);
+  cueBtnRightEl.classList.toggle('show', showCue && settings.buttonsEnabled);
   if(showCue) drawAimGuides();
-
   for(const b of sorted) drawBall(b);
-
   if(cueStrikeAnim>0 || showCue) drawCueStick();
 }
-
 function drawAimGuides(){
   const nx = aimDir.x, ny = aimDir.y;
   const hit = castAimRay(nx,ny);
-
   ctx.save();
   ctx.lineWidth = 2;
   ctx.strokeStyle = 'rgba(255,255,255,.9)';
   ctx.shadowColor='rgba(0,0,0,.5)'; ctx.shadowBlur=3;
   ctx.beginPath(); ctx.moveTo(cue.x,cue.y); ctx.lineTo(hit.x,hit.y); ctx.stroke();
   ctx.restore();
-
   if(hit.ball){
-    // ghost-ball reticle at the contact point
     ctx.save();
     ctx.strokeStyle='rgba(255,255,255,.95)'; ctx.lineWidth=2;
     ctx.beginPath(); ctx.arc(hit.x,hit.y,cue.r*0.92,0,7); ctx.stroke();
     ctx.restore();
-
-    // faint continuation showing predicted object-ball travel direction
     const ox = hit.ball.x-hit.x, oy = hit.ball.y-hit.y;
     const od = Math.hypot(ox,oy)||1;
     const onx=ox/od, ony=oy/od;
@@ -1460,12 +2114,6 @@ function drawAimGuides(){
     ctx.strokeStyle='rgba(255,255,255,.4)'; ctx.lineWidth=1.5;
     ctx.beginPath(); ctx.moveTo(hit.ball.x,hit.ball.y); ctx.lineTo(fx,fy); ctx.stroke();
     ctx.restore();
-
-    // predicted CUE BALL path after impact (plain/stun shot, no spin): the
-    // velocity component along the line of centers transfers to the object
-    // ball, so the cue ball continues only along the remaining tangential
-    // component — a dead-straight hit leaves it stopped, a cut sends it
-    // deflecting off to the side, matching real physics.
     const along = nx*onx + ny*ony;
     let cax = nx - along*onx, cay = ny - along*ony;
     const cueAfterLen = Math.hypot(cax,cay);
@@ -1485,16 +2133,12 @@ function drawAimGuides(){
     ctx.restore();
   }
 }
-
-// marches a ray from the cue ball center in direction (nx,ny); returns
-// the point where the cue ball's edge would first touch a rail or another ball.
 function castAimRay(nx,ny){
   let minT = Infinity;
   if(nx>0) minT = Math.min(minT, (PLAY.x+PLAY.w-cue.r-cue.x)/nx);
   if(nx<0) minT = Math.min(minT, (PLAY.x+cue.r-cue.x)/nx);
   if(ny>0) minT = Math.min(minT, (PLAY.y+PLAY.h-cue.r-cue.y)/ny);
   if(ny<0) minT = Math.min(minT, (PLAY.y+cue.r-cue.y)/ny);
-
   let hitBall = null;
   for(const b of balls){
     if(b===cue || b.pocketed) continue;
@@ -1510,12 +2154,9 @@ function castAimRay(nx,ny){
   if(!isFinite(minT)) minT = 0;
   return { x: cue.x+nx*minT, y: cue.y+ny*minT, ball: hitBall };
 }
-
 function drawCueStick(){
   let nx, ny, pullPower;
   if(cueStrikeAnim>0){
-    // mid-strike thrust: use the direction the cue ball is travelling (or
-    // aimDir if it hasn't started moving yet) and ease the pull-back to 0
     const sp = Math.hypot(cue.vx,cue.vy);
     if(sp>1){ nx=-cue.vx/sp; ny=-cue.vy/sp; } else { nx=-aimDir.x; ny=-aimDir.y; }
     pullPower = strikePower*cueStrikeAnim;
@@ -1523,37 +2164,27 @@ function drawCueStick(){
     nx = -aimDir.x; ny = -aimDir.y;
     pullPower = currentPower;
   }
-  // stick lives on the OPPOSITE side of the shot direction (behind the ball,
-  // on the side the player pulled back toward). At power 0 it rests in its
-  // idle pose close to the ball.
   const pullBack = 16 + pullPower*95;
   const stickLen = Math.max(PLAY.w, PLAY.h) * 0.62;
   const tipGap = cue.r*1.55 + pullBack;
-
   const sx = cue.x + nx*tipGap;
   const sy = cue.y + ny*tipGap;
   const ex = cue.x + nx*(tipGap+stickLen);
   const ey = cue.y + ny*(tipGap+stickLen);
-
   ctx.save();
   ctx.lineCap='round';
-  // shadow
   ctx.strokeStyle='rgba(0,0,0,.35)';
   ctx.lineWidth = cue.r*0.62;
   ctx.beginPath(); ctx.moveTo(sx+3,sy+4); ctx.lineTo(ex+3,ey+4); ctx.stroke();
-  // stick gradient
   const grad = ctx.createLinearGradient(sx,sy,ex,ey);
   grad.addColorStop(0,'#e9c98a'); grad.addColorStop(0.1,'#c9a05a'); grad.addColorStop(1,'#5a3a20');
   ctx.strokeStyle = grad;
   ctx.lineWidth = cue.r*0.5;
   ctx.beginPath(); ctx.moveTo(sx,sy); ctx.lineTo(ex,ey); ctx.stroke();
-  // tip
   ctx.fillStyle = '#eee6d8';
   ctx.beginPath(); ctx.arc(sx,sy, cue.r*0.28, 0,7); ctx.fill();
   ctx.restore();
 }
-
-
 function drawBall(b){
   if(b.pocketed){
     if(b.popT>=1) return;
@@ -1564,7 +2195,6 @@ function drawBall(b){
     ctx.restore();
     return;
   }
-  // shadow
   ctx.save();
   ctx.beginPath();
   ctx.ellipse(b.x+b.r*0.28, b.y+b.r*0.4, b.r*0.92, b.r*0.55, 0,0,7);
@@ -1572,24 +2202,19 @@ function drawBall(b){
   ctx.filter='blur(1.5px)';
   ctx.fill();
   ctx.restore();
-
   drawBallShape(b, 1);
 }
-
 function drawBallShape(b, scale){
   const r = b.r*scale;
   ctx.save();
   ctx.translate(b.x,b.y);
-
   if(b.num===0){
-    // cue ball
     const g = ctx.createRadialGradient(-r*0.35,-r*0.4,r*0.1, 0,0,r*1.1);
     g.addColorStop(0,'#ffffff'); g.addColorStop(0.7,'#eef0f2'); g.addColorStop(1,'#c9ccd1');
     ctx.beginPath(); ctx.arc(0,0,r,0,7); ctx.fillStyle=g; ctx.fill();
   } else {
     const info = BALL_COLORS[b.num];
     ctx.beginPath(); ctx.arc(0,0,r,0,7); ctx.clip();
-    // base white
     ctx.fillStyle = '#f2ede2'; ctx.fillRect(-r,-r,r*2,r*2);
     if(info.stripe){
       ctx.fillStyle = info.c;
@@ -1598,38 +2223,33 @@ function drawBallShape(b, scale){
       ctx.fillStyle = info.c;
       ctx.fillRect(-r,-r,r*2,r*2);
     }
-    // number disc
     ctx.beginPath(); ctx.arc(0,0,r*0.42,0,7);
     ctx.fillStyle='#f2ede2'; ctx.fill();
     ctx.fillStyle = '#20232a';
     ctx.font = `700 ${r*0.5}px Inter, sans-serif`;
     ctx.textAlign='center'; ctx.textBaseline='middle';
     ctx.fillText(b.num, 0, r*0.03);
-    // glossy overlay
     const g = ctx.createRadialGradient(-r*0.35,-r*0.4,r*0.05, -r*0.1,-r*0.1,r*1.3);
     g.addColorStop(0,'rgba(255,255,255,.55)'); g.addColorStop(0.4,'rgba(255,255,255,.08)'); g.addColorStop(1,'rgba(255,255,255,0)');
     ctx.beginPath(); ctx.arc(0,0,r,0,7); ctx.fillStyle=g; ctx.fill();
     ctx.restore();
     ctx.save(); ctx.translate(b.x,b.y);
   }
-
-  // rim shade for all balls
   const rim = ctx.createRadialGradient(0,0,r*0.6,0,0,r);
   rim.addColorStop(0,'rgba(0,0,0,0)'); rim.addColorStop(1,'rgba(0,0,0,.25)');
   ctx.beginPath(); ctx.arc(0,0,r,0,7); ctx.fillStyle=rim; ctx.fill();
-
   ctx.restore();
 }
 
-/* =========================================================
-   HUD
-========================================================= */
 function updateHud(){
   document.getElementById('hudLoc').textContent = currentLoc.city;
+  if(isSandbox){
+    document.getElementById('hudTurn').textContent = 'Песочница — ваша очередь';
+    return;
+  }
   const g = groups[turn] ? (groups[turn]==='solid'?' · сплошные':' · полосатые') : '';
   document.getElementById('hudTurn').textContent = `Игрок ${turn}${g} — целится`;
 }
-
 function updateTray(){
   const solidsTray = document.getElementById('solidsTray');
   const stripesTray = document.getElementById('stripesTray');
@@ -1651,36 +2271,83 @@ function updateTray(){
   }
 }
 
-/* =========================================================
-   START / SWITCH
-========================================================= */
+// Start game
 function startGame(locId, isReset){
   currentLoc = LOCATIONS.find(l=>l.id===locId) || LOCATIONS[0];
   resizeCanvas();
   rackBalls();
-  turn = 1; groups = {1:null,2:null}; gameOver=false;
-  firstShotTaken=false; lastPocketedThisTurn=[]; scratchThisTurn=false; eightPocketedIllegally=false;
-  aimDir = {x:1,y:0}; dragMode=null; currentPower=0; strikePower=0; cueStrikeAnim=0;
+  turn = 1;
+  groups = {1:null,2:null};
+  gameOver = false;
+  firstShotTaken = false;
+  lastPocketedThisTurn = [];
+  scratchThisTurn = false;
+  eightPocketedIllegally = false;
+  aimDir = {x:1,y:0};
+  dragMode = null;
+  currentPower = 0;
+  strikePower = 0;
+  cueStrikeAnim = 0;
+  btnRotateDir = 0;
+  endJoystick();
+  touchTargetAngle = null;
   setPowerHandle(0);
-  updateHud(); updateTray();
   document.getElementById('pocketTray').innerHTML = '';
   document.getElementById('powerHint').style.opacity='1';
   document.getElementById('msgOverlay').classList.remove('show');
 
+  isSandbox = (gameMode === 'sandbox');
+  if(isSandbox){
+    document.getElementById('hudTurn').textContent = 'Песочница — ваша очередь';
+    document.getElementById('solidsTray').style.display = 'none';
+    document.getElementById('stripesTray').style.display = 'none';
+  } else {
+    botName = BOT_NAMES[Math.floor(Math.random() * BOT_NAMES.length)];
+    document.getElementById('hudTurn').textContent = `Игрок 1 — целится (против ${botName})`;
+    document.getElementById('solidsTray').style.display = 'flex';
+    document.getElementById('stripesTray').style.display = 'flex';
+  }
+  updateHud();
+  updateTray();
   if(!isReset){
     menuEl.classList.add('hidden');
     gameScreen.classList.add('active');
   }
 }
 
-window.addEventListener('resize', ()=>{
-  if(gameScreen.classList.contains('active')){
-    const wasBalls = balls;
-    resizeCanvas();
-  }
+// Кнопки управления игрой
+document.getElementById('backBtn').addEventListener('click', ()=>{
+  gameScreen.classList.remove('active');
+  menuEl.classList.remove('hidden');
+  showModeCarousel(); // Возврат к выбору режима
+});
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  startGame(currentLoc.id, true);
+});
+document.getElementById('msgBtn').addEventListener('click', ()=>{
+  document.getElementById('msgOverlay').classList.remove('show');
+  startGame(currentLoc.id, true);
 });
 
-requestAnimationFrame((t)=>{ lastT=t; requestAnimationFrame(step); });
+// Игровой цикл
+let lastT = performance.now();
+function step(now){
+  let dt = (now-lastT)/1000;
+  lastT = now;
+  dt = Math.min(dt, 0.032);
+  updateTouchRotation(dt);
+  updateJoystickRotation(dt);
+  updateButtonRotation(dt);
+  updatePhysics(dt);
+  render();
+  requestAnimationFrame(step);
+}
+requestAnimationFrame(step);
+
+// ============================================================
+// 6. ИНИЦИАЛИЗАЦИЯ – показываем выбор режима
+// ============================================================
+showModeCarousel();
 
 })();
 </script>
